@@ -1,10 +1,22 @@
-<%- include('partials/head', { title: 'Log in', nav: false }) %>
+<%- include('partials/head', { title: 'Sign in', nav: false }) %>
+<div class="loginwrap">
 <form class="card login" method="post" action="/login">
-  <h1>Bank Audit</h1>
-  <p class="muted">Sign in with the account your administrator gave you.</p>
+  <div class="loginhead">
+    <%- include('partials/seal', { size: 84 }) %>
+    <div class="small caps muted">State of San Andreas</div>
+    <h1><%= appName %></h1>
+    <% if (appTagline) { %><p class="tagline"><%= appTagline %></p><% } %>
+  </div>
+  <div class="govwarn">
+    <b>Warning — authorized use only</b>
+    <p>You are accessing a restricted government information system. Access is permitted only for personnel acting under an approved warrant or court order, and only for the case it covers.</p>
+    <p>All sessions, searches and records viewed are monitored and logged. Unauthorized access, misuse or disclosure of information may result in disciplinary action and prosecution.</p>
+  </div>
   <% if (error) { %><p class="err"><%= error %></p><% } %>
   <label>Username <input name="username" value="<%= username %>" autofocus required autocomplete="username" autocapitalize="off"></label>
   <label>Password <input type="password" name="password" required autocomplete="current-password"></label>
-  <button>Log in</button>
+  <label class="ack"><input type="checkbox" name="ack" value="1" required> I acknowledge this notice and confirm my access is authorized.</label>
+  <button>Sign in</button>
 </form>
+</div>
 <%- include('partials/foot') %>

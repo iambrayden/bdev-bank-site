@@ -7,6 +7,9 @@ const web = require('./web');
 const auth = require('./auth');
 
 const PORT = Number(process.env.PORT || 3000);
+const APP_NAME = process.env.APP_NAME || 'SAFIN';
+const APP_TAGLINE = process.env.APP_TAGLINE ?? 'San Andreas Financial Intelligence Network';
+const BANNER_TEXT = process.env.BANNER_TEXT ?? 'Restricted · Authorized use only · All activity is monitored and logged';
 
 store.init();
 
@@ -26,6 +29,9 @@ app.use((req, res, next) => {
   res.locals.path = req.path;
   res.locals.query = req.query;
   res.locals.th = config.get().thresholds;
+  res.locals.appName = APP_NAME;
+  res.locals.appTagline = APP_TAGLINE;
+  res.locals.bannerText = BANNER_TEXT;
   res.locals.user = null;
   res.locals.can = () => false;
   next();
@@ -66,7 +72,7 @@ app.use((err, req, res, next) => {
 });
 
 if (require.main === module) {
-  app.listen(PORT, () => console.log(`Bank audit listening on :${PORT}`));
+  app.listen(PORT, () => console.log(`${APP_NAME} listening on :${PORT}`));
 }
 
 module.exports = app;

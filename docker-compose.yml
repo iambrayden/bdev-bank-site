@@ -15,6 +15,9 @@ services:
       - PLAYERS_TABLE=${PLAYERS_TABLE:-players}
       - AUDIT_TABLES=${AUDIT_TABLES:-}
       - TZ_DISPLAY=${TZ_DISPLAY:-UTC}
+      - APP_NAME=${APP_NAME:-SAFIN}
+      - APP_TAGLINE=${APP_TAGLINE:-San Andreas Financial Intelligence Network}
+      - BANNER_TEXT=${BANNER_TEXT:-Restricted · Authorized use only · All activity is monitored and logged}
     volumes:
       - audit-data:/data
     expose:

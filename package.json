@@ -1,7 +1,7 @@
 {
-  "name": "bdev-bank-audit",
+  "name": "safin",
   "version": "1.0.0",
-  "description": "Read-only bank / economy auditor for FiveM Qbox servers",
+  "description": "SAFIN – San Andreas Financial Intelligence Network: read-only financial records access for FiveM Qbox servers",
   "main": "src/server.js",
   "private": true,
   "scripts": {

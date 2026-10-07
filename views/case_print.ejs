@@ -9,6 +9,7 @@
 <body class="print">
 <main>
 <p class="noprint"><button onclick="window.print()">Print / save as PDF</button> <a href="/cases/<%= c.id %>">← back to case</a></p>
+<div class="printhead"><%- include('partials/seal', { size: 56 }) %><div><div class="small caps">State of San Andreas</div><b><%= appName %></b><% if (appTagline) { %> · <%= appTagline %><% } %><div class="small caps neg">Restricted · Law enforcement sensitive</div></div></div>
 <h1><%= caseNo(c.id) %> — <%= c.title %></h1>
 <dl class="kv">
   <dt>Status</dt><dd><%= c.status.replace('_', ' ') %> · priority <%= c.priority %></dd>
@@ -41,6 +42,7 @@
 <ol class="timeline">
 <% for (const n of notes) { %><li class="<%= n.kind %>"><div class="small muted"><%= fmt.date(n.created_at) %> · <%= n.kind === 'system' ? 'system' : (n.username || '—') %></div><div class="prewrap"><%= n.body %></div></li><% } %>
 </ol>
+<p class="govfoot">Restricted. Prepared under warrant for official use only. Do not disseminate outside the authorized case.</p>
 <p class="small muted">Amounts and balances were captured when each item was added. Times in <%= fmt.TZ %>.</p>
 </main>
 </body>

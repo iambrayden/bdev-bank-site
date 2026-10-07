@@ -1,4 +1,8 @@
-# Bank Audit for FiveM / Qbox
+# SAFIN — San Andreas Financial Intelligence Network
+
+Warrant-gated financial records access for FiveM / Qbox servers. Users sign in
+through a government-style "authorized use only" notice that they must
+acknowledge, and a restricted-access banner sits on every page.
 
 A read-only web dashboard for auditing the economy of a FiveM Qbox server
 (Renewed-Banking tables). You give it your database credentials and a list of
@@ -129,7 +133,9 @@ You can change the thresholds in Settings.
    - `ADMIN_USERNAME`, `ADMIN_PASSWORD` – the first superadmin (used only
      when no users exist yet)
    - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
-   - optional: `PLAYERS_TABLE`, `AUDIT_TABLES`, `TZ_DISPLAY`, `SESSION_HOURS`
+   - optional: `PLAYERS_TABLE`, `AUDIT_TABLES`, `TZ_DISPLAY`, `SESSION_HOURS`,
+     `APP_NAME` / `APP_TAGLINE` (branding; defaults to SAFIN), `BANNER_TEXT`
+     (the red bar at the top of every page; set it empty to hide it)
 4. Add a **persistent storage** volume mounted at `/data`. **Required**: it
    holds users, cases and the activity log (`app.db`) as well as settings
    (`config.json`). Without it, all of that is lost on redeploy. The compose

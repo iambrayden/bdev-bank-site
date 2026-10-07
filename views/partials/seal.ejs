@@ -1,0 +1,11 @@
+<%# Fictional State of San Andreas seal (inline SVG). size: px %>
+<svg class="seal" width="<%= typeof size !== 'undefined' ? size : 40 %>" height="<%= typeof size !== 'undefined' ? size : 40 %>" viewBox="0 0 120 120" role="img" aria-label="State of San Andreas seal">
+  <defs><path id="sealArc" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs>
+  <circle cx="60" cy="60" r="58" fill="#0f2747" stroke="#c9a227" stroke-width="3"/>
+  <circle cx="60" cy="60" r="36" fill="none" stroke="#c9a227" stroke-width="1.5"/>
+  <text font-family="Georgia, serif" font-size="10.5" font-weight="700" fill="#c9a227" letter-spacing="1.6">
+    <textPath href="#sealArc" startOffset="0">STATE OF SAN ANDREAS · FINANCIAL INTELLIGENCE ·</textPath>
+  </text>
+  <polygon fill="#c9a227" points="60,32 66.5,51 86.5,51 70.5,63 76.5,82 60,70.5 43.5,82 49.5,63 33.5,51 53.5,51"/>
+  <text x="60" y="95" text-anchor="middle" font-family="Georgia, serif" font-size="9" font-weight="700" fill="#e8d9a8" letter-spacing="1">SAFIN</text>
+</svg>

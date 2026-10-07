@@ -203,3 +203,43 @@ body.print main { max-width: 900px; }
 .permgrid { grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); }
 .grid2 { grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); }
 .inline input:not([type=checkbox]) { max-width: 100%; }
+.brand { letter-spacing: 0.08em; }
+.login h1 { margin-bottom: 0; letter-spacing: 0.08em; }
+.tagline { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+/* ---------- government look ---------- */
+:root { --gov-navy: #0f2747; --gov-gold: #c9a227; --gov-band: #8a1c1c; }
+.govbanner { background: var(--gov-band); color: #fff; text-align: center; font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 4px 12px; }
+header.top { background: var(--gov-navy); border-bottom: 3px solid var(--gov-gold); color: #fff; top: 0; }
+header.top .brand { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; }
+header.top .brand b { display: block; font-family: Georgia, "Times New Roman", serif; letter-spacing: 0.12em; font-size: 16px; }
+header.top .brand small { display: block; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: #c8d3e3; font-weight: 400; }
+header.top nav a { color: #c8d3e3; }
+header.top nav a.on, header.top nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+header.top .me a, header.top button.link { color: #e8d9a8; }
+header.top .search input { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); color: #fff; }
+header.top .search input::placeholder { color: #aab7ca; }
+h1 { font-family: Georgia, "Times New Roman", serif; letter-spacing: 0.01em; }
+.caps { text-transform: uppercase; letter-spacing: 0.12em; }
+.govfoot { max-width: 900px; margin: 0 auto 8px; padding: 0 16px; text-align: center; font-size: 11px; color: var(--muted); }
+.loginwrap { min-height: 80vh; display: flex; align-items: center; justify-content: center; }
+.login { max-width: 460px; width: 100%; margin: 32px auto; border-top: 4px solid var(--gov-gold); }
+.loginhead { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.loginhead h1 { margin: 2px 0 0; font-size: 30px; letter-spacing: 0.16em; }
+.govwarn { border: 1px solid var(--gov-band); border-left-width: 4px; background: var(--hl); padding: 8px 12px; font-size: 12.5px; border-radius: 6px; }
+.govwarn b { color: var(--gov-band); text-transform: uppercase; letter-spacing: 0.06em; font-size: 12px; }
+.govwarn p { margin: 6px 0 0; }
+.login label.ack { flex-direction: row; align-items: flex-start; gap: 8px; font-size: 12.5px; }
+.login button { background: var(--gov-navy); border-color: var(--gov-navy); }
+.printhead { display: flex; gap: 12px; align-items: center; border-bottom: 2px solid var(--gov-navy); padding-bottom: 8px; margin-bottom: 8px; }
+@media (prefers-color-scheme: dark) { .govwarn b { color: #ff8a80; } .govwarn { border-color: #b53a3a; } }
+@media (max-width: 700px) { header.top .brand small { display: none; } }
+@media print { .govbanner { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+.kpi .sev { color: #fff; }
+header.top { flex-wrap: nowrap; gap: 12px; }
+header.top nav { flex-wrap: nowrap; overflow-x: auto; }
+header.top nav a { white-space: nowrap; }
+header.top .me { white-space: nowrap; }
+header.top .search input { width: 180px; }
+@media (max-width: 1500px) { header.top .brand small { display: none; } }
+@media (max-width: 1100px) { header.top { flex-wrap: wrap; } header.top nav { order: 3; width: 100%; } }
