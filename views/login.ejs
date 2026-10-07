@@ -15,8 +15,8 @@
   <% if (error) { %><p class="err"><%= error %></p><% } %>
   <label>Username <input name="username" value="<%= username %>" autofocus required autocomplete="username" autocapitalize="off"></label>
   <label>Password <input type="password" name="password" required autocomplete="current-password"></label>
-  <label class="ack"><input type="checkbox" name="ack" value="1" required> I acknowledge this notice and confirm my access is authorized.</label>
   <button>Sign in</button>
+  <p class="small muted center">By signing in you acknowledge this notice and confirm your access is authorized.</p>
 </form>
 </div>
 <%- include('partials/foot') %>

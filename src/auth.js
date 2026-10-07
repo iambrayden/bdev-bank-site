@@ -39,7 +39,6 @@ router.post(
   wrap(async (req, res) => {
     const username = String(req.body.username || '').trim();
     const password = String(req.body.password || '');
-    if (req.body.ack !== '1') return res.status(400).render('login', { error: 'You must acknowledge the authorized-use notice to sign in.', username });
     const keys = [`ip:${req.ip}`, `u:${username.toLowerCase()}`];
     if (keys.some(throttled)) return res.status(429).render('login', { error: 'Too many attempts. Try again in a few minutes.', username });
     const user = store.getUserByName(username);

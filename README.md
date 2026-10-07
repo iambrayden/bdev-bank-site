@@ -1,8 +1,7 @@
 # SAFIN — San Andreas Financial Intelligence Network
 
-Warrant-gated financial records access for FiveM / Qbox servers. Users sign in
-through a government-style "authorized use only" notice that they must
-acknowledge, and a restricted-access banner sits on every page.
+Warrant-gated financial records access for FiveM / Qbox servers. The login page shows a government-style "authorized use only" notice, and a
+restricted-access banner sits on every page.
 
 A read-only web dashboard for auditing the economy of a FiveM Qbox server
 (Renewed-Banking tables). You give it your database credentials and a list of

@@ -272,3 +272,4 @@ header.top .search { margin-left: auto; }
 ul.plain { list-style: none; padding: 0; margin: 0; }
 ul.plain li { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; border-bottom: 1px solid var(--line); }
 ul.plain li .r { margin-left: auto; }
+.center { text-align: center; margin: 0; }
