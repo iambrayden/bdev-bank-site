@@ -1,7 +1,7 @@
 <%- include('partials/head', { title: 'Add to case' }) %>
 <h1>Add to case</h1>
 <section class="card">
-  <h2><%= EVIDENCE_TYPES[ev.type] || 'Character' %>: <%= red(ev.title) %></h2>
+  <h2><%= EVIDENCE_TYPES[ev.type] || 'Citizen' %>: <%= red(ev.title) %></h2>
   <% if (ev.type !== 'player') { %><%- include('partials/evidence', { e: ev }) %><% } else if (ev.data.name) { %>
     <p><b><%= ev.data.name %></b> · <span class="mono"><%= ev.ref %></span> · <%= ev.data.job %> · bank <%= money(ev.data.bank) %> · cash <%= money(ev.data.cash) %></p>
   <% } %>
@@ -19,7 +19,7 @@
   <% if (ev.type === 'player') { %><label>Involvement <select name="label"><% for (const l of SUBJECT_LABELS) { %><option <%= l === 'subject' ? 'selected' : '' %>><%= l %></option><% } %></select></label><% } %>
   <label>Note <textarea name="note" rows="3" placeholder="Why this matters"></textarea></label>
   <% if (relatedCids.length) { %>
-  <fieldset><legend class="small">Also add these characters to the case</legend>
+  <fieldset><legend class="small">Also add these citizens to the case</legend>
   <% for (const c of relatedCids) { const p = s.playerMap.get(c); %><label class="small"><input type="checkbox" name="add_subject" value="<%= c %>" checked> <%= p ? p.name : c %> <span class="mono muted"><%= c %></span></label><% } %>
   </fieldset>
   <% } %>

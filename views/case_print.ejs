@@ -21,9 +21,9 @@
 <h2>Summary</h2><div class="prewrap"><%= c.summary || '—' %></div>
 <% if (c.outcome) { %><h2>Outcome</h2><div class="prewrap"><%= c.outcome %></div><% } %>
 
-<h2>Characters involved (<%= subjects.length %>)</h2>
+<h2>Citizens involved (<%= subjects.length %>)</h2>
 <table class="data">
-<thead><tr><th>Character</th><th>Citizen ID</th><th>Involvement</th><th>Job</th><th class="r">Bank + cash when added</th><th>Note</th></tr></thead>
+<thead><tr><th>Citizen</th><th>Citizen ID</th><th>Involvement</th><th>Job</th><th class="r">Bank + cash when added</th><th>Note</th></tr></thead>
 <tbody><% for (const sub of subjects) { const t = sub.snapshot || {}; %>
 <tr><td><%= sub.name || t.name || '' %></td><td class="mono"><%= sub.citizenid %></td><td><%= sub.label %></td><td><%= t.job || '' %></td><td class="r mono"><%= t.bank !== undefined ? money((t.bank || 0) + (t.cash || 0)) : '' %></td><td><%= sub.note %></td></tr>
 <% } %></tbody>

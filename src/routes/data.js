@@ -1,4 +1,4 @@
-// Economy pages: overview, characters, accounts, transactions, audit flags, raw tables.
+// Economy pages: overview, citizens, accounts, transactions, audit flags, raw tables.
 const express = require('express');
 const config = require('../config');
 const db = require('../db');
@@ -54,7 +54,7 @@ function playerSort(list, sort, canMoney) {
 function homeFor(req) {
   const order = [
     ['dashboard.view', '/'],
-    ['players.view', '/players'],
+    ['players.view', '/citizens'],
     ['cases.view', '/cases'],
     ['cases.view_all', '/cases'],
     ['transactions.view', '/transactions'],
@@ -119,7 +119,7 @@ router.get(
 );
 
 router.get(
-  '/players',
+  '/citizens',
   need('players.view'),
   wrap(async (req, res) => {
     const s = await snap(req);
@@ -147,7 +147,7 @@ router.get(
 );
 
 router.get(
-  '/players/:cid',
+  '/citizens/:cid',
   need('players.view'),
   wrap(async (req, res) => {
     const s = await snap(req);
@@ -156,12 +156,12 @@ router.get(
     const tx = s.txByAccount.get(`personal:${cid}`) || [];
     let linked = [];
     if (can(req, 'players.linked')) linked = (await audit.linkedRows(cid)).filter((sec) => tableAllowed(req, sec.table.name));
-    if (!p && !tx.length && !linked.some((l) => l.rows.length)) return res.status(404).render('error', { message: `No character with citizenid ${cid}` });
-    store.log(req.user, 'view.character', cid, p?.name || '', req.ip);
+    if (!p && !tx.length && !linked.some((l) => l.rows.length)) return res.status(404).render('error', { message: `No citizen with citizenid ${cid}` });
+    store.log(req.user, 'view.citizen', cid, p?.name || '', req.ip);
     const accounts = can(req, 'accounts.view') ? s.accounts.filter((a) => a.auth.includes(cid) || a.creator === cid) : [];
     const alts = can(req, 'players.identity') && p && p.license ? s.players.filter((o) => o.license === p.license && o.citizenid !== cid) : [];
     const flags = can(req, 'audit.view') ? s.flags.filter((f) => f.citizenid === cid || (f.accountType === 'personal' && f.account === cid)) : [];
-    // Who this character sends money to / receives from
+    // Who this citizen sends money to / receives from
     const counterparties = new Map();
     if (can(req, 'transactions.view')) {
       for (const t of tx) {

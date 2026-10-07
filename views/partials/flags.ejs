@@ -9,7 +9,7 @@
   <td><strong><%= red(f.title) %></strong><br><span class="muted small mono"><%= f.code %></span></td>
   <td class="msg"><%= red(f.detail) %><% if (f.trans_id && can('transactions.view')) { %><br><a class="small" href="/transactions?q=<%= encodeURIComponent(f.trans_id) %>">find transaction</a><% } %></td>
   <td class="nowrap">
-    <% if (f.citizenid) { const o = s.playerMap.get(f.citizenid); %><a href="/players/<%= encodeURIComponent(f.citizenid) %>"><%= o ? o.name : f.citizenid %></a><% } else if (f.accountType === 'shared') { %><a class="tag" href="/accounts/<%= encodeURIComponent(f.account) %>"><%= f.account %></a><% } else if (f.account) { %><a href="/players/<%= encodeURIComponent(f.account) %>"><%= f.account %></a><% } %>
+    <% if (f.citizenid) { const o = s.playerMap.get(f.citizenid); %><a href="/citizens/<%= encodeURIComponent(f.citizenid) %>"><%= o ? o.name : f.citizenid %></a><% } else if (f.accountType === 'shared') { %><a class="tag" href="/accounts/<%= encodeURIComponent(f.account) %>"><%= f.account %></a><% } else if (f.account) { %><a href="/citizens/<%= encodeURIComponent(f.account) %>"><%= f.account %></a><% } %>
   </td>
   <td class="r mono"><%= f.amount !== undefined ? money(f.amount) : '' %></td>
   <td class="nowrap small"><%= f.time ? fmt.date(f.time) : '' %></td>

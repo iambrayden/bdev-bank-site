@@ -7,7 +7,7 @@
 <tr class="<%= big ? 'hl' : '' %>">
   <td class="nowrap" title="<%= fmt.ago(t.time) %>"><%= fmt.date(t.time) %></td>
   <% if (showAccount) { %>
-  <td class="nowrap"><% if (t.accountType === 'personal') { const o = s.playerMap.get(t.account); %><a href="/players/<%= encodeURIComponent(t.account) %>"><%= o ? o.name : t.account %></a> <span class="muted mono"><%= t.account %></span><% } else { %><a href="/accounts/<%= encodeURIComponent(t.account) %>" class="tag"><%= t.account %></a><% } %></td>
+  <td class="nowrap"><% if (t.accountType === 'personal') { const o = s.playerMap.get(t.account); %><a href="/citizens/<%= encodeURIComponent(t.account) %>"><%= o ? o.name : t.account %></a> <span class="muted mono"><%= t.account %></span><% } else { %><a href="/accounts/<%= encodeURIComponent(t.account) %>" class="tag"><%= t.account %></a><% } %></td>
   <% } %>
   <td><span class="pill <%= t.signed < 0 ? 'out' : 'in' %>"><%= t.type %></span></td>
   <td class="r mono <%= t.signed < 0 ? 'neg' : 'pos' %>"><%= t.signed < 0 ? '-' : '+' %><%= money(t.amount) %></td>

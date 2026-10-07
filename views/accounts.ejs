@@ -11,8 +11,8 @@
   <td><a class="tag" href="/accounts/<%= encodeURIComponent(a.id) %>"><%= a.id %></a></td>
   <td class="r mono"><%= money(a.amount) %></td>
   <td class="r"><%= a.txCount || '' %></td>
-  <td><% if (a.creator) { const o = s.playerMap.get(a.creator); %><a href="/players/<%= encodeURIComponent(a.creator) %>"><%= o ? o.name : a.creator %></a><% } %></td>
-  <td><% for (const c of a.auth) { const o = s.playerMap.get(c); %><a class="small" href="/players/<%= encodeURIComponent(c) %>"><%= o ? o.name : c %></a> <% } %></td>
+  <td><% if (a.creator) { const o = s.playerMap.get(a.creator); %><a href="/citizens/<%= encodeURIComponent(a.creator) %>"><%= o ? o.name : a.creator %></a><% } %></td>
+  <td><% for (const c of a.auth) { const o = s.playerMap.get(c); %><a class="small" href="/citizens/<%= encodeURIComponent(c) %>"><%= o ? o.name : c %></a> <% } %></td>
   <td><% if (a.frozen) { %><span class="pill out">frozen</span><% } %></td>
 </tr>
 <% } %>

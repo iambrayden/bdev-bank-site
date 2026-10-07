@@ -6,12 +6,12 @@ acknowledge, and a restricted-access banner sits on every page.
 
 A read-only web dashboard for auditing the economy of a FiveM Qbox server
 (Renewed-Banking tables). You give it your database credentials and a list of
-tables, and it shows every character's money, transactions, shared accounts,
+tables, and it shows every citizen's money, transactions, shared accounts,
 houses, bills, vehicles and jobs, and flags suspicious activity.
 
 ## How the data fits together
 
-The **`players` table is the core**. It lists every character: citizenid,
+The **`players` table is the core**. It lists every citizen: citizenid,
 name (`charinfo`), money (`cash` / `bank` / `crypto`), job and license. Every
 other table is linked to it by **citizenid**:
 
@@ -28,21 +28,21 @@ other table is linked to it by **citizenid**:
 | `player_groups` | Jobs / gangs (multi-job) | `citizenid` |
 
 You can add any other table in **Settings** with the *Generic* role; if it has
-a `citizenid` column its rows show up on each character's page. Column names
+a `citizenid` column its rows show up on each citizen's page. Column names
 can be overridden per table if your schema differs.
 
 ## Pages
 
-- **Overview** – total money in the economy, richest characters, 14-day
+- **Overview** – total money in the economy, richest citizens, 14-day
   deposit / withdrawal flow, money by job, high-severity flags.
-- **Characters** – searchable, sortable list of every character from the
+- **Citizens** – searchable, sortable list of every citizen from the
   players table, with CSV export.
-- **Character page** – balances, job and groups, other characters on the same
+- **Citizen page** – balances, job and groups, other citizens on the same
   license, shared accounts they can use, counterparties they send to or
   receive from, full transaction history, and every linked row (houses,
   bills, vehicles, jobs).
 - **Shared accounts** – society / shared accounts with balances, authorised
-  characters, job members and history.
+  citizens, job members and history.
 - **Transactions** – search every transaction by name, citizenid, amount,
   type, date range or transaction id, with CSV export.
 - **Audit flags** – see below.
@@ -62,7 +62,7 @@ manage accounts in **Admin → Users**.
 - **Per-user overrides**: each permission can be set to *from role*, *allow*
   or *deny* for an individual user.
 - **Table access** per role: which tables can be browsed raw and shown as
-  linked records on character pages.
+  linked records on citizen pages.
 - **Superadmins** have every permission and are the only ones who can manage
   other superadmins. Admins who aren't superadmins can never grant a
   permission they don't hold themselves.
@@ -77,7 +77,7 @@ manage accounts in **Admin → Users**.
 | Administration | `admin.settings`, `admin.users`, `admin.roles`, `admin.activity` |
 
 **Activity log** (Admin → Activity log) records sign-ins and failed sign-ins,
-every character / account / table viewed, every export, every case change and
+every citizen / account / table viewed, every export, every case change and
 every admin action, with user and IP.
 
 ## Cases
@@ -85,12 +85,12 @@ every admin action, with user and IP.
 Case files collect everything about an investigation in one place:
 
 - **“+ case”** links on every transaction and audit flag, and **Add to
-  case** buttons on character and shared-account pages, add the item to an
-  existing case or start a new one. The characters on either side of a
+  case** buttons on citizen and shared-account pages, add the item to an
+  existing case or start a new one. The citizens on either side of a
   transaction can be added in the same step.
 - Evidence is **snapshotted** when added (amounts, both sides of a transfer,
   balances), so it survives Renewed-Banking rotating its history or a
-  character being deleted. Character entries show balance *when added* next
+  citizen being deleted. Citizen entries show balance *when added* next
   to the balance *now*.
 - Add free-text notes and links (clips, screenshots, logs) as evidence, with
   an investigator note on each item.
@@ -105,10 +105,10 @@ Case files collect everything about an investigation in one place:
 | Flag | Meaning |
 | --- | --- |
 | `LARGE_TX` | One transaction at or above the large-transaction threshold. |
-| `HIGH_BALANCE` / `HIGH_ACCOUNT_BALANCE` | A character or shared account above its threshold. |
+| `HIGH_BALANCE` / `HIGH_ACCOUNT_BALANCE` | A citizen or shared account above its threshold. |
 | `NEGATIVE_BALANCE` | Negative cash, bank, crypto or account balance. |
 | `BURST` | Many transactions on one account in a few minutes (exploit or script spam). |
-| `ALT_TRANSFER` | Money sent between two characters on the **same FiveM license**. |
+| `ALT_TRANSFER` | Money sent between two citizens on the **same FiveM license**. |
 | `REPEATED_TRANSFERS` | Repeated transfers to the same person within N days. |
 | `TRANS_ID_MISMATCH` / `TRANS_ID_DUPLICATE` | The same transaction id recorded with different amounts, or more than twice. |
 | `ORPHAN_RECORDS` / `ORPHAN_AUTH` | Vehicles, houses, bills, history or account access for a citizenid that isn't in `players`. |
@@ -162,5 +162,5 @@ npm test
   footer to reload it.
 - Transaction history only goes back as far as Renewed-Banking keeps it, so
   the "history in / out" totals won't always match current balances.
-- Transfers are matched to characters by the character name in
-  `issuer` / `receiver`. When two characters share a name, the match is skipped.
+- Transfers are matched to citizens by the citizen name in
+  `issuer` / `receiver`. When two citizens share a name, the match is skipped.

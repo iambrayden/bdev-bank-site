@@ -1,11 +1,11 @@
 <%- include('partials/head', { title: p ? p.name : cid }) %>
 <%- include('partials/warnings') %>
-<div class="crumbs"><a href="/players">Characters</a> / <span class="mono"><%= cid %></span></div>
+<div class="crumbs"><a href="/citizens">Citizens</a> / <span class="mono"><%= cid %></span></div>
 <div class="titlebar">
-<h1><%= p ? p.name : 'Unknown character' %> <span class="muted mono"><%= cid %></span><% if (p && p.frozen) { %> <span class="pill out">frozen</span><% } %></h1>
+<h1><%= p ? p.name : 'Unknown citizen' %> <span class="muted mono"><%= cid %></span><% if (p && p.frozen) { %> <span class="pill out">frozen</span><% } %></h1>
 <% if (can('cases.edit') || can('cases.create')) { %><a class="btn" href="/cases/attach?type=player&ref=<%= encodeURIComponent(cid) %>">Add to case</a><% } %>
 </div>
-<% if (!p) { %><p class="warn">This citizenid is not in the players table — the character may have been deleted. Records below still reference it.</p><% } %>
+<% if (!p) { %><p class="warn">This citizenid is not in the players table — the citizen may have been deleted. Records below still reference it.</p><% } %>
 
 <% if (p) { %>
 <section class="kpis">
@@ -17,7 +17,7 @@
 
 <div class="grid2">
 <section class="card">
-  <h2>Character</h2>
+  <h2>Citizen</h2>
   <dl class="kv">
     <dt>Citizen ID</dt><dd class="mono"><%= p.citizenid %></dd>
     <% if (can('players.identity')) { %>
@@ -30,7 +30,7 @@
     <% } %>
     <dt>Job</dt><dd><%= p.job ? `${p.job.label} (${p.job.name})` : '—' %><% if (p.job && p.job.grade !== undefined) { %> · <%= p.job.grade %><% } %><% if (p.job && p.job.onduty) { %> · <span class="pill in">on duty</span><% } %></dd>
     <% if (p.gang) { %><dt>Gang</dt><dd><%= p.gang.label %></dd><% } %>
-    <% if (p.groups.length) { %><dt>Groups</dt><dd><% for (const g of p.groups) { %><a class="tag" href="/players?job=<%= encodeURIComponent(g.group) %>"><%= g.group %> · <%= g.type %> <%= g.grade %></a> <% } %></dd><% } %>
+    <% if (p.groups.length) { %><dt>Groups</dt><dd><% for (const g of p.groups) { %><a class="tag" href="/citizens?job=<%= encodeURIComponent(g.group) %>"><%= g.group %> · <%= g.type %> <%= g.grade %></a> <% } %></dd><% } %>
     <% if (can('money.view')) for (const [k, v] of Object.entries(p.otherMoney)) { %><dt><%= k %></dt><dd class="mono"><%= v %></dd><% } %>
     <dt>Last updated</dt><dd><%= p.lastUpdated %></dd>
   </dl>
@@ -45,10 +45,10 @@
   <% } %>
   <% } %>
   <% if (can('players.identity')) { %>
-  <h2>Other characters on this license <span class="muted">(<%= alts.length %>)</span></h2>
+  <h2>Other citizens on this license <span class="muted">(<%= alts.length %>)</span></h2>
   <% if (!alts.length) { %><p class="muted">None.</p><% } else { %>
   <table class="data"><tbody>
-  <% for (const a of alts) { %><tr><td><a href="/players/<%= encodeURIComponent(a.citizenid) %>"><%= a.name %></a> <span class="muted mono small"><%= a.citizenid %></span></td><td class="r mono"><%= money(a.cash + a.bank) %></td></tr><% } %>
+  <% for (const a of alts) { %><tr><td><a href="/citizens/<%= encodeURIComponent(a.citizenid) %>"><%= a.name %></a> <span class="muted mono small"><%= a.citizenid %></span></td><td class="r mono"><%= money(a.cash + a.bank) %></td></tr><% } %>
   </tbody></table>
   <% } %>
   <% } %>
@@ -78,7 +78,7 @@
     <thead><tr><th>Name</th><th class="r">Transactions</th><th class="r">Sent to</th><th class="r">Received from</th></tr></thead>
     <tbody>
     <% for (const c of counterparties) { const same = p && c.cid && s.playerMap.get(c.cid)?.license === p.license; %>
-      <tr class="<%= same && can('players.identity') ? 'hl' : '' %>"><td><% if (c.cid) { %><a href="/players/<%= encodeURIComponent(c.cid) %>"><%= c.name %></a><% } else { %><%= c.name %><% } %><% if (same && can('players.identity')) { %> <span class="sev high">same license</span><% } %></td>
+      <tr class="<%= same && can('players.identity') ? 'hl' : '' %>"><td><% if (c.cid) { %><a href="/citizens/<%= encodeURIComponent(c.cid) %>"><%= c.name %></a><% } else { %><%= c.name %><% } %><% if (same && can('players.identity')) { %> <span class="sev high">same license</span><% } %></td>
       <td class="r"><%= c.n %></td><td class="r mono neg"><%= c.sent ? money(c.sent) : '' %></td><td class="r mono pos"><%= c.received ? money(c.received) : '' %></td></tr>
     <% } %>
     </tbody>

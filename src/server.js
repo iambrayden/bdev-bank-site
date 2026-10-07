@@ -56,6 +56,8 @@ app.use((req, res, next) => {
 app.use(auth.router);
 app.use(auth.requireUser, web.locals);
 
+// Old URLs: "characters" are now "citizens".
+app.get(['/players', '/players/*'], (req, res) => res.redirect(301, req.originalUrl.replace(/^\/players/, '/citizens')));
 app.use('/', require('./routes/data').router);
 app.use('/cases', require('./routes/cases').router);
 const { admin, account } = require('./routes/admin');

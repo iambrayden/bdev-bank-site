@@ -14,7 +14,7 @@
   <nav>
     <% const links = [
       ['/', 'Overview', can('dashboard.view')],
-      ['/players', 'Characters', can('players.view')],
+      ['/citizens', 'Citizens', can('players.view')],
       ['/accounts', 'Shared accounts', can('accounts.view')],
       ['/transactions', 'Transactions', can('transactions.view')],
       ['/audit', 'Audit flags', can('audit.view')],
@@ -27,8 +27,8 @@
     <% } %>
   </nav>
   <% if (can('players.view')) { %>
-  <form class="search" action="/players" method="get">
-    <input name="q" placeholder="Name / citizenid" aria-label="Search characters">
+  <form class="search" action="/citizens" method="get">
+    <input name="q" placeholder="Name / citizenid" aria-label="Search citizens">
   </form>
   <% } %>
   <div class="me">

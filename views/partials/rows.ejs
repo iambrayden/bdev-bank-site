@@ -6,7 +6,7 @@
 <% if (!rows.length) { %><tr><td colspan="<%= columns.length || 1 %>" class="muted">No rows.</td></tr><% } %>
 <% for (const r of rows) { %><tr>
 <% for (const c of columns) { const v = fmt.cell(r[c]); %>
-<td><% if (linkCols && linkCols.includes(c) && v) { %><a class="mono" href="/players/<%= encodeURIComponent(v) %>"><%= v %></a><% } else if (v.length > 60) { %><details><summary><%= v.slice(0, 48) %>…</summary><pre><%= fmt.pretty(r[c]) %></pre></details><% } else { %><%= v %><% } %></td>
+<td><% if (linkCols && linkCols.includes(c) && v) { %><a class="mono" href="/citizens/<%= encodeURIComponent(v) %>"><%= v %></a><% } else if (v.length > 60) { %><details><summary><%= v.slice(0, 48) %>…</summary><pre><%= fmt.pretty(r[c]) %></pre></details><% } else { %><%= v %><% } %></td>
 <% } %>
 </tr><% } %>
 </tbody>

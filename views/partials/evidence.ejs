@@ -7,7 +7,7 @@
     <tbody>
     <% for (const r of d.records || []) { %>
       <tr>
-        <td><% if (r.accountType === 'personal') { %><a href="/players/<%= encodeURIComponent(r.account) %>"><%= r.owner || r.account %></a> <span class="mono muted small"><%= r.account %></span><% } else { %><a class="tag" href="/accounts/<%= encodeURIComponent(r.account) %>"><%= r.account %></a><% } %></td>
+        <td><% if (r.accountType === 'personal') { %><a href="/citizens/<%= encodeURIComponent(r.account) %>"><%= r.owner || r.account %></a> <span class="mono muted small"><%= r.account %></span><% } else { %><a class="tag" href="/accounts/<%= encodeURIComponent(r.account) %>"><%= r.account %></a><% } %></td>
         <td><span class="pill <%= /^with/.test(r.type) ? 'out' : 'in' %>"><%= r.type %></span></td>
         <td class="r mono"><%= money(r.amount) %></td>
         <td><%= r.issuer %></td><td><%= r.receiver %></td><td class="msg"><%= red(r.message) %></td>
@@ -18,10 +18,10 @@
 <% } else if (e.type === 'flag') { %>
   <div><span class="sev <%= d.severity %>"><%= d.severity %></span> <span class="mono small"><%= d.code %></span> <%= red(d.title) %></div>
   <div class="small"><%= red(d.detail) %></div>
-  <div class="small muted"><% if (d.citizenid) { %>Character <a href="/players/<%= encodeURIComponent(d.citizenid) %>" class="mono"><%= d.citizenid %></a> · <% } %><% if (d.amount !== undefined) { %><%= money(d.amount) %> · <% } %><%= d.time ? fmt.date(d.time) : '' %></div>
+  <div class="small muted"><% if (d.citizenid) { %>Citizen <a href="/citizens/<%= encodeURIComponent(d.citizenid) %>" class="mono"><%= d.citizenid %></a> · <% } %><% if (d.amount !== undefined) { %><%= money(d.amount) %> · <% } %><%= d.time ? fmt.date(d.time) : '' %></div>
 <% } else if (e.type === 'account') { %>
   <div>Shared account <a class="tag" href="/accounts/<%= encodeURIComponent(d.id) %>"><%= d.id %></a> · balance <b class="mono"><%= money(d.amount) %></b> when added (<%= fmt.date(d.at) %>) · <%= d.txCount %> transactions<% if (d.frozen) { %> · <span class="pill out">frozen</span><% } %></div>
-  <% if ((d.auth || []).length) { %><div class="small">Authorised: <% for (const c of d.auth) { %><a class="mono" href="/players/<%= encodeURIComponent(c) %>"><%= c %></a> <% } %></div><% } %>
+  <% if ((d.auth || []).length) { %><div class="small">Authorised: <% for (const c of d.auth) { %><a class="mono" href="/citizens/<%= encodeURIComponent(c) %>"><%= c %></a> <% } %></div><% } %>
 <% } else if (e.type === 'link') { %>
   <div><a href="<%= d.url %>" target="_blank" rel="noopener noreferrer nofollow"><%= d.url %></a></div>
   <% if (d.body) { %><div class="prewrap"><%= d.body %></div><% } %>

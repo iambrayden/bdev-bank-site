@@ -61,15 +61,15 @@
 </div>
 
 <section class="card">
-  <h2>Characters involved <span class="muted">(<%= subjects.length %>)</span></h2>
+  <h2>Citizens involved <span class="muted">(<%= subjects.length %>)</span></h2>
   <div class="scroll">
   <table class="data">
-    <thead><tr><th>Character</th><th>Involvement</th><th>Note</th><th class="r">Bank + cash when added</th><th class="r">Bank + cash now</th><th>Added</th><% if (canEdit) { %><th></th><% } %></tr></thead>
+    <thead><tr><th>Citizen</th><th>Involvement</th><th>Note</th><th class="r">Bank + cash when added</th><th class="r">Bank + cash now</th><th>Added</th><% if (canEdit) { %><th></th><% } %></tr></thead>
     <tbody>
-    <% if (!subjects.length) { %><tr><td colspan="7" class="muted">No characters yet. Add one below, or use “Add to case” on a character page.</td></tr><% } %>
+    <% if (!subjects.length) { %><tr><td colspan="7" class="muted">No citizens yet. Add one below, or use “Add to case” on a citizen page.</td></tr><% } %>
     <% for (const sub of subjects) { const live = s && s.playerMap.get(sub.citizenid); const then = sub.snapshot || {}; %>
       <tr>
-        <td><a href="/players/<%= encodeURIComponent(sub.citizenid) %>"><%= (live && live.name) || sub.name || sub.citizenid %></a> <span class="mono muted small"><%= sub.citizenid %></span></td>
+        <td><a href="/citizens/<%= encodeURIComponent(sub.citizenid) %>"><%= (live && live.name) || sub.name || sub.citizenid %></a> <span class="mono muted small"><%= sub.citizenid %></span></td>
         <td><span class="tag"><%= sub.label %></span></td>
         <td class="msg"><%= sub.note %></td>
         <td class="r mono"><%= then.bank !== undefined ? money((then.bank || 0) + (then.cash || 0)) : '' %></td>
@@ -86,7 +86,7 @@
     <input name="citizenid" placeholder="citizenid" required class="mono" size="12">
     <select name="label"><% for (const l of SUBJECT_LABELS) { %><option <%= l === 'subject' ? 'selected' : '' %>><%= l %></option><% } %></select>
     <input name="note" placeholder="Note (optional)" size="30">
-    <button>Add character</button>
+    <button>Add citizen</button>
   </form>
   <% } %>
 </section>

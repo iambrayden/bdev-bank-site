@@ -5,7 +5,7 @@
 const ROLES = {
   players: {
     label: 'Players (core)',
-    description: 'One row per character. Holds money JSON (cash/bank/crypto) and charinfo.',
+    description: 'One row per citizen. Holds money JSON (cash/bank/crypto) and charinfo.',
     single: true,
     columns: {
       citizenid: 'citizenid',
@@ -39,7 +39,7 @@ const ROLES = {
   },
   house_bills: {
     label: 'House bills',
-    description: 'Utility bills per house, linked to the character who paid / owes.',
+    description: 'Utility bills per house, linked to the citizen who paid / owes.',
     columns: {
       id: 'id',
       house: 'house',
@@ -83,12 +83,12 @@ const ROLES = {
   },
   job_activity: {
     label: 'Job activity',
-    description: 'Who was on duty / held which job. Shown on the character page.',
+    description: 'Who was on duty / held which job. Shown on the citizen page.',
     columns: { citizenid: 'citizenid' },
   },
   generic: {
     label: 'Generic (linked by citizenid)',
-    description: 'Any other table. If the citizenid column exists, rows show on the character page.',
+    description: 'Any other table. If the citizenid column exists, rows show on the citizen page.',
     columns: { citizenid: 'citizenid' },
   },
 };

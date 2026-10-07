@@ -2,7 +2,7 @@
 <h1>Admin</h1>
 <%- include('../partials/admintabs') %>
 <h2>Activity log <span class="muted">(<%= fmt.int(pg.total) %>)</span></h2>
-<p class="small muted">Every sign-in, character / account / table view, export, case change and admin action is recorded here.</p>
+<p class="small muted">Every sign-in, citizen / account / table view, export, case change and admin action is recorded here.</p>
 <form class="filters" method="get">
   <select name="user"><option value="">Any user</option><% for (const u of users) { %><option <%= query.user === u.username ? 'selected' : '' %>><%= u.username %></option><% } %></select>
   <select name="action"><option value="">Any action</option>

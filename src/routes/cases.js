@@ -1,4 +1,4 @@
-// Case files: group characters, transactions, flags and accounts into an investigation.
+// Case files: group citizens, transactions, flags and accounts into an investigation.
 const express = require('express');
 const audit = require('../audit');
 const store = require('../store');
@@ -69,7 +69,7 @@ async function buildEvidence(type, q) {
       ref: first.trans_id || `${first.account}|${first.time}`,
       title: `${first.type} ${fmt.money(amount)} · ${first.issuer || first.account} → ${first.receiver || first.account}`,
       data: { trans_id: first.trans_id, amount, time: first.time, records },
-      // characters on either side, to offer as subjects
+      // citizens on either side, to offer as subjects
       cids: [...new Set(list.filter((t) => t.accountType === 'personal').map((t) => t.account).concat([s.nameIndex.get(String(first.issuer).toLowerCase())?.[0], s.nameIndex.get(String(first.receiver).toLowerCase())?.[0]]).filter(Boolean))],
     };
   }
@@ -102,7 +102,7 @@ async function attach(req, caseId, ev) {
     store.addEvidence(caseId, { type: ev.type, ref: ev.ref, title: ev.title, data: ev.data, note: clean(req.body.note, 2000) }, req.user.id);
     store.log(req.user, 'case.evidence_add', caseNo(caseId), `${ev.type}:${ev.ref}`, req.ip);
   }
-  // Optionally add the characters involved as subjects too
+  // Optionally add the citizens involved as subjects too
   const addCids = [].concat(req.body.add_subject || []).filter((c) => ev.cids.includes(c));
   for (const cid of addCids) {
     const p = s.playerMap.get(cid);
@@ -266,14 +266,14 @@ router.post(
     const cid = clean(req.body.citizenid, 60);
     if (!cid) return flash(res, `/cases/${req.case.id}`, 'Enter a citizenid.');
     await attach(req, req.case.id, { type: 'player', ref: cid, cids: [cid] });
-    flash(res, `/cases/${req.case.id}`, 'Character added.');
+    flash(res, `/cases/${req.case.id}`, 'Citizen added.');
   })
 );
 
 router.post('/:id/subjects/:sid/delete', loadCase, need('cases.edit'), (req, res) => {
   store.removeSubject(req.case.id, Number(req.params.sid));
   store.log(req.user, 'case.subject_remove', caseNo(req.case.id), req.params.sid, req.ip);
-  flash(res, `/cases/${req.case.id}`, 'Character removed.');
+  flash(res, `/cases/${req.case.id}`, 'Citizen removed.');
 });
 
 router.post('/:id/evidence', loadCase, need('cases.edit'), (req, res) => {

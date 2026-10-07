@@ -2,9 +2,9 @@
 <%- include('partials/warnings') %>
 <h1>Economy overview</h1>
 <section class="kpis">
-  <div class="kpi"><span>Characters</span><b><%= fmt.int(s.players.length) %></b></div>
-  <div class="kpi"><span>Bank (characters)</span><b><%= money(totals.bank) %></b></div>
-  <div class="kpi"><span>Cash (characters)</span><b><%= money(totals.cash) %></b></div>
+  <div class="kpi"><span>Citizens</span><b><%= fmt.int(s.players.length) %></b></div>
+  <div class="kpi"><span>Bank (citizens)</span><b><%= money(totals.bank) %></b></div>
+  <div class="kpi"><span>Cash (citizens)</span><b><%= money(totals.cash) %></b></div>
   <div class="kpi"><span>Shared accounts</span><b><%= money(accountTotal) %></b><small><%= s.accounts.length %> accounts</small></div>
   <div class="kpi"><span>Money in economy</span><b><%= money(totals.bank + totals.cash + accountTotal) %></b></div>
   <% if (can('audit.view')) { %><a class="kpi" href="/audit"><span>Audit flags</span><b><span class="sev high"><%= sev.high %></span> <span class="sev medium"><%= sev.medium %></span> <span class="sev low"><%= sev.low %></span></b><small>high · medium · low</small></a><% } %>
@@ -21,12 +21,12 @@
 <div class="grid2">
   <% if (can('players.view')) { %>
 <section class="card">
-    <h2>Richest characters <a class="small" href="/players?sort=total">all →</a></h2>
+    <h2>Richest citizens <a class="small" href="/citizens?sort=total">all →</a></h2>
     <table class="data">
-      <thead><tr><th>Character</th><th>Job</th><th class="r">Cash</th><th class="r">Bank</th></tr></thead>
+      <thead><tr><th>Citizen</th><th>Job</th><th class="r">Cash</th><th class="r">Bank</th></tr></thead>
       <tbody>
       <% for (const p of richest) { %>
-        <tr><td><a href="/players/<%= encodeURIComponent(p.citizenid) %>"><%= p.name %></a> <span class="muted mono small"><%= p.citizenid %></span></td>
+        <tr><td><a href="/citizens/<%= encodeURIComponent(p.citizenid) %>"><%= p.name %></a> <span class="muted mono small"><%= p.citizenid %></span></td>
         <td><%= p.job ? p.job.label : '' %></td><td class="r mono"><%= money(p.cash) %></td><td class="r mono"><%= money(p.bank) %></td></tr>
       <% } %>
       </tbody>
@@ -68,7 +68,7 @@
 <section class="card">
     <h2>Money by job</h2>
     <table class="data">
-      <thead><tr><th>Job</th><th class="r">Characters</th><th class="r">Cash + bank</th></tr></thead>
+      <thead><tr><th>Job</th><th class="r">Citizens</th><th class="r">Cash + bank</th></tr></thead>
       <tbody>
       <% for (const j of jobs) { %>
         <tr><td><%= j.name %></td><td class="r"><%= j.n %></td><td class="r mono"><%= money(j.money) %></td></tr>

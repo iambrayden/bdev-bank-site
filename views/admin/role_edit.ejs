@@ -16,7 +16,7 @@
 </section>
 <section class="card">
   <h2>Table access</h2>
-  <p class="small muted">Which tables this role can browse raw (needs <span class="mono">tables.browse</span>) and see as linked records on character pages (needs <span class="mono">players.linked</span>).</p>
+  <p class="small muted">Which tables this role can browse raw (needs <span class="mono">tables.browse</span>) and see as linked records on citizen pages (needs <span class="mono">players.linked</span>).</p>
   <% const t = new Set(r ? r.tables : []); %>
   <label><input type="checkbox" name="all_tables" value="1" <%= t.has('*') ? 'checked' : '' %>> <b>All tables</b> (including ones added later)</label>
   <div class="checks">

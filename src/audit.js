@@ -172,7 +172,7 @@ async function loadGroups() {
   return groups;
 }
 
-// Every citizenid referenced by a linked table, to find assets of deleted characters.
+// Every citizenid referenced by a linked table, to find assets of deleted citizens.
 async function loadReferencedCids() {
   const refs = [];
   for (const t of config.get().tables) {
@@ -315,7 +315,7 @@ function computeFlags(snap, th) {
     }
   }
 
-  // 4. Transfers: repeated pairs and transfers between characters on the same license
+  // 4. Transfers: repeated pairs and transfers between citizens on the same license
   const since = Math.floor(Date.now() / 1000) - th.pairDays * 86400;
   const pairs = new Map();
   for (const t of snap.allTx) {
@@ -325,7 +325,7 @@ function computeFlags(snap, th) {
     const from = snap.playerMap.get(t.account);
     const to = toCid && snap.playerMap.get(toCid);
     if (from && to && from.citizenid !== to.citizenid && from.license && from.license === to.license) {
-      add({ severity: t.amount >= th.largeTransaction ? 'high' : 'medium', code: 'ALT_TRANSFER', title: `Transfer between characters on the same license`, detail: `${from.name} (${from.citizenid}) → ${to.name} (${to.citizenid}) ${fmt(t.amount)}`, citizenid: from.citizenid, account: t.account, accountType: 'personal', amount: t.amount, time: t.time, trans_id: t.trans_id });
+      add({ severity: t.amount >= th.largeTransaction ? 'high' : 'medium', code: 'ALT_TRANSFER', title: `Transfer between citizens on the same license`, detail: `${from.name} (${from.citizenid}) → ${to.name} (${to.citizenid}) ${fmt(t.amount)}`, citizenid: from.citizenid, account: t.account, accountType: 'personal', amount: t.amount, time: t.time, trans_id: t.trans_id });
     }
     if (t.time < since) continue;
     const k = `${t.account}→${t.receiver.toLowerCase()}`;
@@ -354,7 +354,7 @@ function computeFlags(snap, th) {
     if (list.length > 2) add({ severity: 'medium', code: 'TRANS_ID_DUPLICATE', title: `Transaction ${tid} recorded ${list.length} times`, detail: list.map((t) => `${t.account}: ${t.type} ${fmt(t.amount)}`).join(' · '), trans_id: tid, account: list[0].account, accountType: list[0].accountType, time: list[0].time });
   }
 
-  // 6. Assets / records belonging to characters that no longer exist
+  // 6. Assets / records belonging to citizens that no longer exist
   if (snap.players.length) {
     const orphans = new Map();
     for (const r of snap.refs) {
@@ -371,10 +371,10 @@ function computeFlags(snap, th) {
         orphans.set(cid, o);
       }
     }
-    for (const [cid, where] of orphans) add({ severity: 'low', code: 'ORPHAN_RECORDS', title: `Records for unknown character ${cid}`, detail: where.join(' · '), citizenid: cid });
+    for (const [cid, where] of orphans) add({ severity: 'low', code: 'ORPHAN_RECORDS', title: `Records for unknown citizen ${cid}`, detail: where.join(' · '), citizenid: cid });
     for (const a of snap.accounts) {
       const missing = a.auth.filter((c) => !snap.playerMap.has(c));
-      if (missing.length) add({ severity: 'low', code: 'ORPHAN_AUTH', title: `Account ${a.id} authorises unknown characters`, detail: missing.join(', '), account: a.id, accountType: 'shared' });
+      if (missing.length) add({ severity: 'low', code: 'ORPHAN_AUTH', title: `Account ${a.id} authorises unknown citizens`, detail: missing.join(', '), account: a.id, accountType: 'shared' });
     }
   }
 
@@ -407,7 +407,7 @@ async function houseInfo(names) {
   return out;
 }
 
-// Rows from every non-core configured table that reference this character.
+// Rows from every non-core configured table that reference this citizen.
 async function linkedRows(cid) {
   const sections = [];
   const skip = new Set(['players', 'player_transactions', 'bank_accounts']);
