@@ -9,11 +9,22 @@ const auth = require('./auth');
 const PORT = Number(process.env.PORT || 3000);
 // Changes whenever the stylesheet changes, so browsers never keep an old copy after a deploy.
 const ASSET_VERSION = require('crypto').createHash('sha1').update(require('fs').readFileSync(path.join(__dirname, '..', 'public', 'style.css'))).digest('hex').slice(0, 10);
-const APP_NAME = process.env.APP_NAME || 'LEDGER';
-const APP_TAGLINE = process.env.APP_TAGLINE ?? 'Law Enforcement Data Gathering & Evidence Records';
-const STATE_NAME = process.env.STATE_NAME || 'State of Georgia';
-const RP_NOTICE = process.env.RP_NOTICE ?? 'Fictional system for in-game roleplay. Not affiliated with any real government agency.';
-const BANNER_TEXT = process.env.BANNER_TEXT ?? 'Restricted · Authorized use only · All activity is monitored and logged';
+// Branding. Values left over from the old SAFIN / San Andreas branding (e.g. copied into
+// Coolify's environment from an earlier docker-compose.yml) are ignored in favour of the defaults.
+function brand(name, fallback, allowEmpty = false) {
+  const v = process.env[name];
+  if (v === undefined || (!allowEmpty && v === '')) return fallback;
+  if (/san\s*andreas|safin/i.test(v)) {
+    console.warn(`Ignoring outdated ${name}="${v}" (old SAFIN / San Andreas branding). Remove or update it in your environment.`);
+    return fallback;
+  }
+  return v;
+}
+const APP_NAME = brand('APP_NAME', 'LEDGER');
+const APP_TAGLINE = brand('APP_TAGLINE', 'Law Enforcement Data Gathering & Evidence Records', true);
+const STATE_NAME = brand('STATE_NAME', 'State of Georgia');
+const RP_NOTICE = brand('RP_NOTICE', 'Fictional system for in-game roleplay. Not affiliated with any real government agency.', true);
+const BANNER_TEXT = brand('BANNER_TEXT', 'Restricted · Authorized use only · All activity is monitored and logged', true);
 
 store.init();
 

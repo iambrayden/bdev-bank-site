@@ -134,7 +134,8 @@ You can change the thresholds in Settings.
    - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
    - optional: `PLAYERS_TABLE`, `AUDIT_TABLES`, `TZ_DISPLAY`, `SESSION_HOURS`,
      `STATE_NAME` (defaults to State of Georgia), `APP_NAME` / `APP_TAGLINE`
-     (branding; defaults to LEDGER), `BANNER_TEXT`
+     (branding; defaults to LEDGER). Leftover values mentioning SAFIN or San Andreas are
+     ignored with a warning in the logs — delete them from Coolify's environment, `BANNER_TEXT`
      (the red bar at the top of every page; set it empty to hide it)
 4. Add a **persistent storage** volume mounted at `/data`. **Required**: it
    holds users, cases and the activity log (`app.db`) as well as settings
