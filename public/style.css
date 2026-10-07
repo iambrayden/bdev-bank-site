@@ -243,3 +243,32 @@ header.top .me { white-space: nowrap; }
 header.top .search input { width: 180px; }
 @media (max-width: 1500px) { header.top .brand small { display: none; } }
 @media (max-width: 1100px) { header.top { flex-wrap: wrap; } header.top nav { order: 3; width: 100%; } }
+
+/* ---------- header layout (v2) ---------- */
+header.top { display: flex; align-items: center; gap: 20px; padding: 0 20px; min-height: 60px; flex-wrap: nowrap; }
+header.top .brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; padding-right: 18px; border-right: 1px solid rgba(255,255,255,0.15); }
+header.top .brand .seal { flex-shrink: 0; display: block; }
+.brand-text { display: flex; flex-direction: column; justify-content: center; line-height: 1.15; }
+.brand-name { font-family: Georgia, "Times New Roman", serif; font-weight: 700; font-size: 17px; letter-spacing: 0.16em; color: #fff; }
+.brand-tag { font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #c8d3e3; margin-top: 2px; }
+header.top nav { display: flex; align-items: center; gap: 2px; align-self: stretch; }
+header.top nav a { display: flex; align-items: center; padding: 0 12px; border-radius: 0; border-bottom: 3px solid transparent; margin-bottom: -3px; align-self: stretch; }
+header.top nav a.on { background: rgba(255,255,255,0.08); border-bottom-color: var(--gov-gold); color: #fff; }
+header.top nav a:hover { background: rgba(255,255,255,0.06); text-decoration: none; }
+header.top .search { margin-left: auto; }
+@media (max-width: 1500px) { .brand-tag { display: none; } }
+@media (max-width: 1320px) {
+  header.top { flex-wrap: wrap; padding: 8px 16px 0; gap: 8px 16px; }
+  header.top .brand { border-right: none; padding-right: 0; }
+  header.top nav { order: 3; width: 100%; overflow-x: auto; min-height: 40px; }
+}
+
+/* ---------- citizen page ---------- */
+.profile { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 4px 0 16px; }
+.profile h1 { margin: 0 0 4px; font-size: 26px; }
+.profile .sub { display: flex; gap: 6px 14px; flex-wrap: wrap; align-items: center; color: var(--muted); }
+.tabs .count { display: inline-block; min-width: 20px; padding: 0 6px; border-radius: 999px; background: var(--tag); font-size: 11px; text-align: center; color: var(--muted); }
+.tabs a.on .count { background: var(--accent); color: #fff; }
+ul.plain { list-style: none; padding: 0; margin: 0; }
+ul.plain li { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; border-bottom: 1px solid var(--line); }
+ul.plain li .r { margin-left: auto; }

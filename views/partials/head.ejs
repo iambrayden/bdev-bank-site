@@ -4,13 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><%= typeof title !== 'undefined' ? title + ' · ' : '' %><%= appName %></title>
-<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/style.css?v=<%= assetVersion %>">
 </head>
 <body>
 <% if (bannerText) { %><div class="govbanner" role="note"><%= bannerText %></div><% } %>
 <% if ((typeof nav === 'undefined' || nav) && user) { %>
 <header class="top">
-  <a class="brand" href="/" title="<%= appTagline %>"><%- include('seal', { size: 34 }) %><span><b><%= appName %></b><% if (appTagline) { %><small><%= appTagline %></small><% } %></span></a>
+  <a class="brand" href="/" title="<%= appTagline %>">
+    <%- include('seal', { size: 36 }) %>
+    <span class="brand-text"><span class="brand-name"><%= appName %></span><% if (appTagline) { %><span class="brand-tag"><%= appTagline %></span><% } %></span>
+  </a>
   <nav>
     <% const links = [
       ['/', 'Overview', can('dashboard.view')],

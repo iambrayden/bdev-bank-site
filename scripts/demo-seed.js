@@ -28,7 +28,7 @@ out.push(`CREATE TABLE bank_accounts_new (id VARCHAR(50) PRIMARY KEY, amount BIG
 out.push(`CREATE TABLE house_bills (id INT AUTO_INCREMENT PRIMARY KEY, house VARCHAR(50), payed_by VARCHAR(50), total INT, breakdown TEXT, payed TINYINT, date DATETIME);`);
 out.push(`CREATE TABLE houselocations (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255) UNIQUE, label VARCHAR(255), coords TEXT, owned TINYINT, price INT, defaultPrice INT, tier INT, garage TEXT, creator VARCHAR(50));`);
 out.push(`CREATE TABLE player_houses (id INT AUTO_INCREMENT PRIMARY KEY, house VARCHAR(50), citizenid VARCHAR(50), owner VARCHAR(50), keyholders TEXT, stash TEXT);`);
-out.push(`CREATE TABLE player_vehicles (id INT AUTO_INCREMENT PRIMARY KEY, license VARCHAR(255), citizenid VARCHAR(50), vehicle VARCHAR(50), hash VARCHAR(50), mods LONGTEXT, plate VARCHAR(15), garage VARCHAR(50), fuel INT, engine FLOAT, body FLOAT, state INT);`);
+out.push(`CREATE TABLE player_vehicles (id INT AUTO_INCREMENT PRIMARY KEY, license VARCHAR(255), citizenid VARCHAR(50), vehicle VARCHAR(50), hash VARCHAR(50), mods LONGTEXT, plate VARCHAR(15), garage VARCHAR(50), fuel INT, engine FLOAT, body FLOAT, state INT, garage_id VARCHAR(50), financed INT DEFAULT 0, mileage FLOAT DEFAULT 0, balance INT DEFAULT 0, paymentamount INT DEFAULT 0, paymentsleft INT DEFAULT 0, financetime INT DEFAULT 0);`);
 out.push('CREATE TABLE player_groups (citizenid VARCHAR(50), `group` VARCHAR(50), type VARCHAR(50), grade INT, PRIMARY KEY (citizenid, `group`, type));');
 out.push(`CREATE TABLE player_jobs_activity (id INT AUTO_INCREMENT PRIMARY KEY, citizenid VARCHAR(50), job VARCHAR(50), last_checkin INT, last_checkout INT);`);
 
@@ -91,8 +91,9 @@ houses.forEach((h, i) => {
   }
 });
 out.push(`INSERT INTO player_houses (house, citizenid, owner, keyholders) VALUES ('ghost_house', 'GONE0000', 'GONE0000', '["GONE0000"]');`);
+let fin = 0;
 for (let i = 0; i < 60; i++) {
   const p = pick(players);
-  out.push(`INSERT INTO player_vehicles (license, citizenid, vehicle, hash, mods, plate, garage, fuel, engine, body, state) VALUES (${q(p.license)}, ${q(p.cid)}, ${q(pick(['sultan', 'thauler', 'dominator', 'skyline']))}, '123', '{}', ${q(cid())}, NULL, 65, 1000, 1000, 1);`);
+  out.push(`INSERT INTO player_vehicles (license, citizenid, vehicle, hash, mods, plate, garage, fuel, engine, body, state, garage_id, financed, mileage, balance, paymentamount, paymentsleft, financetime) VALUES (${q(p.license)}, ${q(p.cid)}, ${q(pick(['sultan', 'thauler', 'dominator', 'skyline']))}, '123', '{}', ${q(cid())}, NULL, 65, 1000, 1000, 1, ${q(pick(['Sandy North', 'Legion Square', 'Marina Drive']))}, ${(fin = rnd() > 0.6 ? 1 : 0)}, ${Math.floor(rnd() * 5000)}, ${fin ? 20000 + Math.floor(rnd() * 80000) : 0}, ${fin ? 2500 : 0}, ${fin ? 1 + Math.floor(rnd() * 20) : 0}, ${fin ? Math.floor(rnd() * 1440) : 0});`);
 }
 console.log(out.join('\n'));

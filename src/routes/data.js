@@ -6,6 +6,7 @@ const audit = require('../audit');
 const store = require('../store');
 const fmt = require('../format');
 const { ROLES } = require('../roles');
+const { summarize } = require('../citizen');
 const { wrap, need, can, paginate, csv, tableAllowed, MASK, redactText } = require('../web');
 
 const router = express.Router();
@@ -177,11 +178,16 @@ router.get(
     const inflow = tx.filter((t) => t.signed > 0).reduce((a, t) => a + t.amount, 0);
     const outflow = tx.filter((t) => t.signed < 0).reduce((a, t) => a + t.amount, 0);
     const cases = can(req, 'cases.view') || can(req, 'cases.view_all') ? store.casesForCitizen(cid, req.user.id, can(req, 'cases.view_all')) : [];
+    const TABS = ['overview', 'transactions', 'assets', 'flags', 'cases', 'records'];
+    const assets = summarize(cid, linked);
     res.render('player', {
       s,
       cid,
       p,
-      tx: paginate(can(req, 'transactions.view') ? tx : [], req, 200),
+      tab: TABS.includes(req.query.tab) ? req.query.tab : 'overview',
+      assets,
+      allTx: can(req, 'transactions.view') ? tx : [],
+      tx: paginate(can(req, 'transactions.view') ? tx : [], req, 100),
       inflow,
       outflow,
       linked,

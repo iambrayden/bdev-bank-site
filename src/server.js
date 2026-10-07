@@ -7,6 +7,8 @@ const web = require('./web');
 const auth = require('./auth');
 
 const PORT = Number(process.env.PORT || 3000);
+// Changes whenever the stylesheet changes, so browsers never keep an old copy after a deploy.
+const ASSET_VERSION = require('crypto').createHash('sha1').update(require('fs').readFileSync(path.join(__dirname, '..', 'public', 'style.css'))).digest('hex').slice(0, 10);
 const APP_NAME = process.env.APP_NAME || 'SAFIN';
 const APP_TAGLINE = process.env.APP_TAGLINE ?? 'San Andreas Financial Intelligence Network';
 const BANNER_TEXT = process.env.BANNER_TEXT ?? 'Restricted · Authorized use only · All activity is monitored and logged';
@@ -19,7 +21,7 @@ app.set('views', path.join(__dirname, '..', 'views'));
 app.set('trust proxy', process.env.TRUST_PROXY || 'loopback, linklocal, uniquelocal');
 app.disable('x-powered-by');
 app.use(express.urlencoded({ extended: false, limit: '512kb' }));
-app.use('/static', express.static(path.join(__dirname, '..', 'public'), { maxAge: '1h' }));
+app.use('/static', express.static(path.join(__dirname, '..', 'public'), { maxAge: '30d', immutable: true }));
 
 app.use((req, res, next) => {
   res.set('X-Frame-Options', 'DENY');
@@ -29,6 +31,7 @@ app.use((req, res, next) => {
   res.locals.path = req.path;
   res.locals.query = req.query;
   res.locals.th = config.get().thresholds;
+  res.locals.assetVersion = ASSET_VERSION;
   res.locals.appName = APP_NAME;
   res.locals.appTagline = APP_TAGLINE;
   res.locals.bannerText = BANNER_TEXT;
