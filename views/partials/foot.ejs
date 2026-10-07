@@ -1,5 +1,6 @@
 </main>
-<p class="govfoot">This is a restricted State of San Andreas information system. Access is granted only under an approved warrant or court order. All activity is monitored and logged; unauthorized access or disclosure is prohibited.</p>
+<p class="govfoot">This is a restricted <%= stateName %> information system. Access is granted only under an approved warrant or court order. All activity is monitored and logged; unauthorized access or disclosure is prohibited.</p>
+<% if (rpNotice) { %><p class="govfoot rp"><%= rpNotice %></p><% } %>
 <% if (typeof s !== 'undefined' && s && s.loadedAt) { %>
 <footer>
   Data loaded <%= fmt.ago(Math.floor(s.loadedAt/1000)) || 'just now' %><% if (can('data.refresh')) { %> · <a href="?<%= new URLSearchParams({ ...query, refresh: 1 }) %>">refresh</a><% } %> · times in <%= fmt.TZ %> · read-only

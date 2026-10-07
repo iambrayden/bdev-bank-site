@@ -282,3 +282,4 @@ header.top .search, header.top .me { flex-shrink: 0; }
   header.top nav { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
   header.top nav::-webkit-scrollbar { display: none; }
 }
+.govfoot.rp { font-style: italic; opacity: 0.8; }

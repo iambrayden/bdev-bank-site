@@ -15,7 +15,7 @@ function snap(players, txs, accounts = []) {
   }
   return { players, playerMap, nameIndex, allTx, txByAccount, accounts, refs: [], frozenPersonal: new Set() };
 }
-const P = (citizenid, name, license, bank = 0) => ({ citizenid, name, license, bank, cash: 0, crypto: 0 });
+const P = (citizenid, name, license, bank = 0) => ({ citizenid, name, license, bank, crypto: 0 });
 const now = Math.floor(Date.now() / 1000);
 
 test('normalizes Renewed-Banking transactions', () => {

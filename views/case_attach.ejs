@@ -3,7 +3,7 @@
 <section class="card">
   <h2><%= EVIDENCE_TYPES[ev.type] || 'Citizen' %>: <%= red(ev.title) %></h2>
   <% if (ev.type !== 'player') { %><%- include('partials/evidence', { e: ev }) %><% } else if (ev.data.name) { %>
-    <p><b><%= ev.data.name %></b> · <span class="mono"><%= ev.ref %></span> · <%= ev.data.job %> · bank <%= money(ev.data.bank) %> · cash <%= money(ev.data.cash) %></p>
+    <p><b><%= ev.data.name %></b> · <span class="mono"><%= ev.ref %></span> · <%= ev.data.job %> · bank <%= money(ev.data.bank) %></p>
   <% } %>
   <p class="small muted">A snapshot of this data is saved with the case, so it stays even after the game rotates its history.</p>
 </section>

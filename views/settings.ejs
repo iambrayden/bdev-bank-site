@@ -26,7 +26,7 @@
   <% const known = new Set(dbTables.map(t => t.name)); %>
   <form method="post" action="/admin/settings/tables">
     <h3>Core: players table</h3>
-    <p class="muted small">The master list of every citizen — citizenid, name (charinfo), money (cash / bank / crypto), job and license. Every other table is linked to it by citizenid.</p>
+    <p class="muted small">The master list of every citizen — citizenid, name (charinfo), money (bank / crypto — cash is never read), job and license. Every other table is linked to it by citizenid.</p>
     <div class="trow core">
       <input name="core_name" value="<%= cfg.core.name %>" list="dbtables" class="mono" required>
       <% if (dbTables.length && !known.has(cfg.core.name)) { %><span class="err small">not found</span><% } %>
@@ -70,7 +70,7 @@
   <h2>Audit thresholds</h2>
   <form method="post" action="/admin/settings/thresholds" class="formgrid">
     <label>Large transaction ($) <input name="largeTransaction" type="number" value="<%= cfg.thresholds.largeTransaction %>"></label>
-    <label>High citizen balance ($) <input name="highBalance" type="number" value="<%= cfg.thresholds.highBalance %>"></label>
+    <label>High citizen bank balance ($) <input name="highBalance" type="number" value="<%= cfg.thresholds.highBalance %>"></label>
     <label>High shared account balance ($) <input name="highAccountBalance" type="number" value="<%= cfg.thresholds.highAccountBalance %>"></label>
     <label>Burst: transactions <input name="burstCount" type="number" value="<%= cfg.thresholds.burstCount %>"></label>
     <label>Burst: within minutes <input name="burstMinutes" type="number" value="<%= cfg.thresholds.burstMinutes %>"></label>

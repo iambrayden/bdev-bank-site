@@ -20,7 +20,7 @@
   <% if (!members.length) { %><p class="muted">No citizens have this job.</p><% } else { %>
   <table class="data"><tbody>
   <% for (const p of members) { const g = p.groups.find(x => x.group === a.id); %>
-    <tr><td><a href="/citizens/<%= encodeURIComponent(p.citizenid) %>"><%= p.name %></a></td><td class="small">grade <%= g ? g.grade : (p.job && p.job.grade) %></td><td class="r mono"><%= money(p.cash + p.bank) %></td></tr>
+    <tr><td><a href="/citizens/<%= encodeURIComponent(p.citizenid) %>"><%= p.name %></a></td><td class="small">grade <%= g ? g.grade : (p.job && p.job.grade) %></td><td class="r mono"><%= money(p.bank) %></td></tr>
   <% } %>
   </tbody></table>
   <% } %>

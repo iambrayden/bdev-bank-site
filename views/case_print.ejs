@@ -9,7 +9,7 @@
 <body class="print">
 <main>
 <p class="noprint"><button onclick="window.print()">Print / save as PDF</button> <a href="/cases/<%= c.id %>">← back to case</a></p>
-<div class="printhead"><%- include('partials/seal', { size: 56 }) %><div><div class="small caps">State of San Andreas</div><b><%= appName %></b><% if (appTagline) { %> · <%= appTagline %><% } %><div class="small caps neg">Restricted · Law enforcement sensitive</div></div></div>
+<div class="printhead"><%- include('partials/seal', { size: 56 }) %><div><div class="small caps"><%= stateName %></div><b><%= appName %></b><% if (appTagline) { %> · <%= appTagline %><% } %><div class="small caps neg">Restricted · Law enforcement sensitive</div></div></div>
 <h1><%= caseNo(c.id) %> — <%= c.title %></h1>
 <dl class="kv">
   <dt>Status</dt><dd><%= c.status.replace('_', ' ') %> · priority <%= c.priority %></dd>
@@ -23,9 +23,9 @@
 
 <h2>Citizens involved (<%= subjects.length %>)</h2>
 <table class="data">
-<thead><tr><th>Citizen</th><th>Citizen ID</th><th>Involvement</th><th>Job</th><th class="r">Bank + cash when added</th><th>Note</th></tr></thead>
+<thead><tr><th>Citizen</th><th>Citizen ID</th><th>Involvement</th><th>Job</th><th class="r">Bank when added</th><th>Note</th></tr></thead>
 <tbody><% for (const sub of subjects) { const t = sub.snapshot || {}; %>
-<tr><td><%= sub.name || t.name || '' %></td><td class="mono"><%= sub.citizenid %></td><td><%= sub.label %></td><td><%= t.job || '' %></td><td class="r mono"><%= t.bank !== undefined ? money((t.bank || 0) + (t.cash || 0)) : '' %></td><td><%= sub.note %></td></tr>
+<tr><td><%= sub.name || t.name || '' %></td><td class="mono"><%= sub.citizenid %></td><td><%= sub.label %></td><td><%= t.job || '' %></td><td class="r mono"><%= t.bank !== undefined ? money(t.bank || 0) : '' %></td><td><%= sub.note %></td></tr>
 <% } %></tbody>
 </table>
 

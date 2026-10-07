@@ -3,7 +3,7 @@
 <form class="card login" method="post" action="/login">
   <div class="loginhead">
     <%- include('partials/seal', { size: 84 }) %>
-    <div class="small caps muted">State of San Andreas</div>
+    <div class="small caps muted"><%= stateName %></div>
     <h1><%= appName %></h1>
     <% if (appTagline) { %><p class="tagline"><%= appTagline %></p><% } %>
   </div>

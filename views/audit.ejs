@@ -17,9 +17,9 @@
   <summary>What gets flagged</summary>
   <dl class="kv">
     <dt>LARGE_TX</dt><dd>Any single transaction ≥ <%= money(th.largeTransaction) %> (high at 5×).</dd>
-    <dt>HIGH_BALANCE</dt><dd>Citizen cash + bank ≥ <%= money(th.highBalance) %>.</dd>
+    <dt>HIGH_BALANCE</dt><dd>Citizen bank balance ≥ <%= money(th.highBalance) %>.</dd>
     <dt>HIGH_ACCOUNT_BALANCE</dt><dd>Shared / society account ≥ <%= money(th.highAccountBalance) %>.</dd>
-    <dt>NEGATIVE_BALANCE</dt><dd>Any negative cash, bank, crypto or account balance.</dd>
+    <dt>NEGATIVE_BALANCE</dt><dd>Any negative bank, crypto or account balance.</dd>
     <dt>BURST</dt><dd>≥ <%= th.burstCount %> transactions on one account within <%= th.burstMinutes %> minutes (exploit / script spam).</dd>
     <dt>ALT_TRANSFER</dt><dd>Money sent between two citizens that share the same FiveM license.</dd>
     <dt>REPEATED_TRANSFERS</dt><dd>≥ <%= th.pairCount %> transfers to the same person within <%= th.pairDays %> days.</dd>

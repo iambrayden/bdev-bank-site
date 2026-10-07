@@ -9,8 +9,10 @@ const auth = require('./auth');
 const PORT = Number(process.env.PORT || 3000);
 // Changes whenever the stylesheet changes, so browsers never keep an old copy after a deploy.
 const ASSET_VERSION = require('crypto').createHash('sha1').update(require('fs').readFileSync(path.join(__dirname, '..', 'public', 'style.css'))).digest('hex').slice(0, 10);
-const APP_NAME = process.env.APP_NAME || 'SAFIN';
-const APP_TAGLINE = process.env.APP_TAGLINE ?? 'San Andreas Financial Intelligence Network';
+const APP_NAME = process.env.APP_NAME || 'LEDGER';
+const APP_TAGLINE = process.env.APP_TAGLINE ?? 'Law Enforcement Data Gathering & Evidence Records';
+const STATE_NAME = process.env.STATE_NAME || 'State of Georgia';
+const RP_NOTICE = process.env.RP_NOTICE ?? 'Fictional system for in-game roleplay. Not affiliated with any real government agency.';
 const BANNER_TEXT = process.env.BANNER_TEXT ?? 'Restricted · Authorized use only · All activity is monitored and logged';
 
 store.init();
@@ -35,6 +37,8 @@ app.use((req, res, next) => {
   res.locals.appName = APP_NAME;
   res.locals.appTagline = APP_TAGLINE;
   res.locals.bannerText = BANNER_TEXT;
+  res.locals.stateName = STATE_NAME;
+  res.locals.rpNotice = RP_NOTICE;
   res.locals.user = null;
   res.locals.can = () => false;
   next();

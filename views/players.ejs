@@ -4,7 +4,7 @@
 <form class="filters" method="get">
   <input name="q" value="<%= query.q || '' %>" placeholder="Name, citizenid, license, job, phone">
   <select name="sort">
-    <% for (const [v, l] of [['total','Cash + bank'],['bank','Bank'],['cash','Cash'],['name','Name'],['activity','Last transaction'],['updated','Last updated']]) { %>
+    <% for (const [v, l] of [['total','Bank balance'],['name','Name'],['activity','Last transaction'],['updated','Last updated']]) { %>
       <option value="<%= v %>" <%= query.sort === v ? 'selected' : '' %>><%= l %></option>
     <% } %>
   </select>
@@ -13,7 +13,7 @@
 </form>
 <div class="scroll">
 <table class="data">
-<thead><tr><th>Citizen</th><th>Citizen ID</th><th>Job</th><th class="r">Cash</th><th class="r">Bank</th><th class="r">Crypto</th><th class="r">Tx</th><th>Last tx</th><th>Flags</th></tr></thead>
+<thead><tr><th>Citizen</th><th>Citizen ID</th><th>Job</th><th class="r">Bank</th><th class="r">Crypto</th><th class="r">Tx</th><th>Last tx</th><th>Flags</th></tr></thead>
 <tbody>
 <% if (!pg.items.length) { %><tr><td colspan="9" class="muted">No citizens match.</td></tr><% } %>
 <% for (const p of pg.items) { const fc = flagCount.get(p.citizenid) || 0; %>
@@ -21,7 +21,6 @@
   <td><a href="/citizens/<%= encodeURIComponent(p.citizenid) %>"><%= p.name %></a><% if (can('players.identity') && p.account && p.account !== p.name) { %> <span class="muted small"><%= p.account %></span><% } %><% if (p.frozen) { %> <span class="pill out">frozen</span><% } %></td>
   <td class="mono"><%= p.citizenid %></td>
   <td><% if (p.job) { %><a href="/citizens?job=<%= encodeURIComponent(p.job.name) %>"><%= p.job.label %></a><% if (p.job.grade !== undefined && p.job.grade !== '') { %> <span class="muted small"><%= p.job.grade %></span><% } %><% } %></td>
-  <td class="r mono"><%= money(p.cash) %></td>
   <td class="r mono"><%= money(p.bank) %></td>
   <td class="r mono"><%= p.crypto ? fmt.int(p.crypto) : '' %></td>
   <td class="r"><%= p.txCount || '' %></td>

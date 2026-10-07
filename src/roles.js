@@ -5,7 +5,7 @@
 const ROLES = {
   players: {
     label: 'Players (core)',
-    description: 'One row per citizen. Holds money JSON (cash/bank/crypto) and charinfo.',
+    description: 'One row per citizen. Holds money JSON (bank/crypto; cash is never read) and charinfo.',
     single: true,
     columns: {
       citizenid: 'citizenid',

@@ -41,7 +41,7 @@ function userChoices() {
 // ---------- building evidence from live data ----------
 function playerSnapshot(p) {
   if (!p) return {};
-  return { name: p.name, cash: p.cash, bank: p.bank, crypto: p.crypto, job: p.job?.label || p.job?.name || '', license: p.license, at: Math.floor(Date.now() / 1000) };
+  return { name: p.name, bank: p.bank, crypto: p.crypto, job: p.job?.label || p.job?.name || '', license: p.license, at: Math.floor(Date.now() / 1000) };
 }
 
 async function buildEvidence(type, q) {

@@ -85,7 +85,6 @@ async function loadPlayers(warnings) {
         license: r.license || '',
         account: r.name || '',
         name: charName || r.name || String(r.citizenid),
-        cash: num(money.cash),
         bank: num(money.bank),
         crypto: num(money.crypto),
         otherMoney: Object.fromEntries(Object.entries(money).filter(([k]) => !['cash', 'bank', 'crypto'].includes(k))),
@@ -285,12 +284,12 @@ function computeFlags(snap, th) {
 
   // 2. Balances
   for (const p of snap.players) {
-    const total = p.cash + p.bank;
-    if (p.cash < 0 || p.bank < 0 || p.crypto < 0) {
-      add({ severity: 'high', code: 'NEGATIVE_BALANCE', title: `Negative balance on ${p.name}`, detail: `cash ${fmt(p.cash)} · bank ${fmt(p.bank)} · crypto ${p.crypto}`, citizenid: p.citizenid, amount: total });
+    const total = p.bank;
+    if (p.bank < 0 || p.crypto < 0) {
+      add({ severity: 'high', code: 'NEGATIVE_BALANCE', title: `Negative balance on ${p.name}`, detail: `bank ${fmt(p.bank)} · crypto ${p.crypto}`, citizenid: p.citizenid, amount: total });
     }
     if (total >= th.highBalance) {
-      add({ severity: total >= th.highBalance * 5 ? 'high' : 'medium', code: 'HIGH_BALANCE', title: `${p.name} holds ${fmt(total)}`, detail: `cash ${fmt(p.cash)} · bank ${fmt(p.bank)}`, citizenid: p.citizenid, amount: total });
+      add({ severity: total >= th.highBalance * 5 ? 'high' : 'medium', code: 'HIGH_BALANCE', title: `${p.name} has ${fmt(total)} in the bank`, detail: `bank ${fmt(p.bank)}`, citizenid: p.citizenid, amount: total });
     }
   }
   for (const a of snap.accounts) {

@@ -7,7 +7,7 @@ const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
 
 const DEFAULT_THRESHOLDS = {
   largeTransaction: 100000, // single transaction >= this is flagged
-  highBalance: 1000000, // citizen cash+bank >= this is flagged
+  highBalance: 1000000, // citizen bank balance >= this is flagged
   highAccountBalance: 5000000, // shared/society account balance >= this is flagged
   burstCount: 10, // >= N transactions on one account ...
   burstMinutes: 10, // ... within this many minutes

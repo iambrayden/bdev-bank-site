@@ -40,15 +40,26 @@ function filterTx(s, q, canMoney) {
 
 function playerSort(list, sort, canMoney) {
   const by = {
-    total: (a, b) => b.cash + b.bank - (a.cash + a.bank),
+    total: (a, b) => b.bank - a.bank,
     bank: (a, b) => b.bank - a.bank,
-    cash: (a, b) => b.cash - a.cash,
     name: (a, b) => a.name.localeCompare(b.name),
     activity: (a, b) => b.lastTx - a.lastTx,
     updated: (a, b) => String(b.lastUpdated).localeCompare(String(a.lastUpdated)),
   };
-  if (!canMoney && ['total', 'bank', 'cash', undefined].includes(sort)) sort = 'name';
+  if (!canMoney && ['total', 'bank', undefined].includes(sort)) sort = 'name';
   return [...list].sort(by[sort] || by.total);
+}
+
+// Civilian cash is never shown: remove it from the players table's money JSON.
+function stripCash(t, c, rows) {
+  if (t.role !== 'players' || !c.money) return;
+  for (const r of rows) {
+    const m = audit.parseJson(r[c.money], null);
+    if (m && typeof m === 'object' && 'cash' in m) {
+      delete m.cash;
+      r[c.money] = JSON.stringify(m);
+    }
+  }
 }
 
 // First page this user may open; used as the landing page.
@@ -73,7 +84,7 @@ router.get(
     if (!can(req, 'dashboard.view')) return res.redirect(homeFor(req));
     const s = await snap(req);
     const th = config.get().thresholds;
-    const totals = s.players.reduce((t, p) => ({ cash: t.cash + p.cash, bank: t.bank + p.bank, crypto: t.crypto + p.crypto }), { cash: 0, bank: 0, crypto: 0 });
+    const totals = s.players.reduce((t, p) => ({ bank: t.bank + p.bank, crypto: t.crypto + p.crypto }), { bank: 0, crypto: 0 });
     const accountTotal = s.accounts.reduce((t, a) => t + a.amount, 0);
     const sev = { high: 0, medium: 0, low: 0, info: 0 };
     for (const f of s.flags) sev[f.severity]++;
@@ -98,7 +109,7 @@ router.get(
       const k = p.job?.label || p.job?.name || 'unemployed';
       const j = jobs.get(k) || { name: k, n: 0, money: 0 };
       j.n++;
-      j.money += p.cash + p.bank;
+      j.money += p.bank;
       jobs.set(k, j);
     }
     const canMoney = can(req, 'money.view');
@@ -139,7 +150,7 @@ router.get(
     if (req.query.format === 'csv') {
       if (!can(req, 'export.csv')) return res.status(403).render('error', { message: 'You do not have permission to export.' });
       const m = (v) => (canMoney ? v : '');
-      return csv(req, res, 'players.csv', ['citizenid', 'name', 'account', 'license', 'job', 'grade', 'cash', 'bank', 'crypto', 'transactions', 'last_updated'], list.map((p) => [p.citizenid, p.name, canId ? p.account : '', canId ? p.license : '', p.job?.name, p.job?.grade, m(p.cash), m(p.bank), m(p.crypto), p.txCount, p.lastUpdated]));
+      return csv(req, res, 'players.csv', ['citizenid', 'name', 'account', 'license', 'job', 'grade', 'bank', 'crypto', 'transactions', 'last_updated'], list.map((p) => [p.citizenid, p.name, canId ? p.account : '', canId ? p.license : '', p.job?.name, p.job?.grade, m(p.bank), m(p.crypto), p.txCount, p.lastUpdated]));
     }
     const flagCount = new Map();
     if (can(req, 'audit.view')) for (const f of s.flags) if (f.citizenid && f.severity !== 'info') flagCount.set(f.citizenid, (flagCount.get(f.citizenid) || 0) + 1);
@@ -297,20 +308,24 @@ router.get(
     let where = '';
     const params = [];
     if (q) {
-      where = 'WHERE ' + cols.ordered.map((c) => `CAST(${db.id(c)} AS CHAR) LIKE ?`).join(' OR ');
-      for (let i = 0; i < cols.size; i++) params.push(`%${q}%`);
+      const moneyCol = t.role === 'players' ? config.columnsFor(t).money : null;
+      const searchCols = cols.ordered.filter((c) => c !== moneyCol);
+      where = 'WHERE ' + searchCols.map((c) => `CAST(${db.id(c)} AS CHAR) LIKE ?`).join(' OR ');
+      for (let i = 0; i < searchCols.length; i++) params.push(`%${q}%`);
     }
-    const sort = cols.has(req.query.sort) ? req.query.sort : cols.ordered[0];
+    const sort = cols.has(req.query.sort) && !(t.role === 'players' && req.query.sort === config.columnsFor(t).money) ? req.query.sort : cols.ordered[0];
     const dir = req.query.dir === 'desc' ? 'DESC' : 'ASC';
     store.log(req.user, 'view.table', t.name, q, req.ip);
     if (req.query.format === 'csv') {
       if (!can(req, 'export.csv')) return res.status(403).render('error', { message: 'You do not have permission to export.' });
       const all = await db.query(`SELECT * FROM ${db.id(t.name)} ${where} ORDER BY ${db.id(sort)} ${dir} LIMIT 50000`, params);
+      stripCash(t, await audit.resolveCols(t), all);
       return csv(req, res, `${t.name}.csv`, cols.ordered, all.map((r) => cols.ordered.map((c) => fmt.cell(r[c]))));
     }
     const [{ n }] = await db.query(`SELECT COUNT(*) AS n FROM ${db.id(t.name)} ${where}`, params);
     const rows = await db.query(`SELECT * FROM ${db.id(t.name)} ${where} ORDER BY ${db.id(sort)} ${dir} LIMIT ? OFFSET ?`, [...params, per, (page - 1) * per]);
     const c = await audit.resolveCols(t);
+    stripCash(t, c, rows);
     const linkCols = ['citizenid', 'owner', 'creator'].map((k) => c[k]).filter(Boolean);
     res.render('table', { t, columns: cols.ordered, rows, page, pages: Math.max(1, Math.ceil(n / per)), total: n, sort, dir, linkCols, role: ROLES[t.role] });
   })

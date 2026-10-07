@@ -1,4 +1,4 @@
-# SAFIN — San Andreas Financial Intelligence Network
+# LEDGER — Law Enforcement Data Gathering & Evidence Records
 
 Warrant-gated financial records access for FiveM / Qbox servers. The login page shows a government-style "authorized use only" notice, and a
 restricted-access banner sits on every page.
@@ -133,7 +133,8 @@ You can change the thresholds in Settings.
      when no users exist yet)
    - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
    - optional: `PLAYERS_TABLE`, `AUDIT_TABLES`, `TZ_DISPLAY`, `SESSION_HOURS`,
-     `APP_NAME` / `APP_TAGLINE` (branding; defaults to SAFIN), `BANNER_TEXT`
+     `STATE_NAME` (defaults to State of Georgia), `APP_NAME` / `APP_TAGLINE`
+     (branding; defaults to LEDGER), `BANNER_TEXT`
      (the red bar at the top of every page; set it empty to hide it)
 4. Add a **persistent storage** volume mounted at `/data`. **Required**: it
    holds users, cases and the activity log (`app.db`) as well as settings

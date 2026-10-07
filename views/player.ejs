@@ -35,7 +35,6 @@
 <% if (p) { %>
 <section class="kpis">
   <div class="kpi"><span>Bank</span><b><%= money(p.bank) %></b></div>
-  <div class="kpi"><span>Cash</span><b><%= money(p.cash) %></b></div>
   <% if (p.crypto) { %><div class="kpi"><span>Crypto</span><b><%= fmt.int(p.crypto) %></b></div><% } %>
   <% if (can('transactions.view')) { %><div class="kpi"><span>Money in / out (on record)</span><b class="small"><span class="pos"><%= money(inflow) %></span> / <span class="neg"><%= money(outflow) %></span></b></div><% } %>
   <% if (showAssets) { %><div class="kpi"><span>Property</span><b class="small"><%= plural(assets.houses.length, 'house') %> · <%= plural(assets.vehicles.length, 'vehicle') %></b><% if (assets.bills && assets.bills.unpaidCount) { %><small class="neg"><%= money(assets.bills.unpaid) %> unpaid bills</small><% } %></div><% } %>
@@ -64,7 +63,7 @@
     <% if (can('players.identity') && alts.length) { %>
     <h3>Other citizens on the same license</h3>
     <ul class="plain">
-      <% for (const a of alts) { %><li><a href="/citizens/<%= encodeURIComponent(a.citizenid) %>"><%= a.name %></a> <span class="muted mono small"><%= a.citizenid %></span> <span class="r mono small"><%= money(a.cash + a.bank) %></span></li><% } %>
+      <% for (const a of alts) { %><li><a href="/citizens/<%= encodeURIComponent(a.citizenid) %>"><%= a.name %></a> <span class="muted mono small"><%= a.citizenid %></span> <span class="r mono small"><%= money(a.bank) %></span></li><% } %>
     </ul>
     <% } %>
     <% if (accounts.length) { %>

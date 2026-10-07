@@ -1,7 +1,7 @@
 {
-  "name": "safin",
+  "name": "ledger",
   "version": "1.0.0",
-  "description": "SAFIN – San Andreas Financial Intelligence Network: read-only financial records access for FiveM Qbox servers",
+  "description": "LEDGER – Law Enforcement Data Gathering & Evidence Records: read-only financial records access for FiveM Qbox servers",
   "main": "src/server.js",
   "private": true,
   "scripts": {
