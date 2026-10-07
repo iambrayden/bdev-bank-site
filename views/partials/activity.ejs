@@ -1,0 +1,18 @@
+<div class="scroll">
+<table class="data">
+<thead><tr><th>When</th><th>User</th><th>Action</th><th>Target</th><th>Detail</th><th>IP</th></tr></thead>
+<tbody>
+<% if (!rows.length) { %><tr><td colspan="6" class="muted">No activity.</td></tr><% } %>
+<% for (const a of rows) { %>
+<tr>
+  <td class="nowrap small"><%= fmt.date(a.at) %></td>
+  <td><%= a.username || '—' %></td>
+  <td class="mono small <%= /failed|delete/.test(a.action) ? 'neg' : '' %>"><%= a.action %></td>
+  <td class="mono small"><% if (a.action === 'view.character') { %><a href="/players/<%= encodeURIComponent(a.target) %>"><%= a.target %></a><% } else if (/^CASE-\d+$/.test(a.target)) { %><a href="/cases/<%= Number(a.target.slice(5)) %>"><%= a.target %></a><% } else { %><%= a.target %><% } %></td>
+  <td class="msg small"><%= a.detail.length > 160 ? a.detail.slice(0, 160) + '…' : a.detail %></td>
+  <td class="mono small muted"><%= a.ip %></td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>

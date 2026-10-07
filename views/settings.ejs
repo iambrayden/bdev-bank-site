@@ -1,11 +1,12 @@
 <%- include('partials/head', { title: 'Settings' }) %>
-<h1>Settings</h1>
+<h1>Admin</h1>
+<%- include('partials/admintabs') %>
 <% if (msg) { %><p class="notice"><%= msg %></p><% } %>
 
 <section class="card" id="db">
   <h2>Database connection</h2>
   <p class="muted small">Defaults come from the <code>DB_*</code> environment variables. Use a MySQL user with <b>SELECT only</b> — the app never writes, and every session is also set read-only.</p>
-  <form method="post" action="/settings/db" class="formgrid">
+  <form method="post" action="/admin/settings/db" class="formgrid">
     <label>Host <input name="host" value="<%= cfg.db.host %>" required></label>
     <label>Port <input name="port" type="number" value="<%= cfg.db.port %>"></label>
     <label>Database <input name="database" value="<%= cfg.db.database %>" required></label>
@@ -23,7 +24,7 @@
   <h2>Tables to audit</h2>
   <datalist id="dbtables"><% for (const t of dbTables) { %><option value="<%= t.name %>"><% } %></datalist>
   <% const known = new Set(dbTables.map(t => t.name)); %>
-  <form method="post" action="/settings/tables">
+  <form method="post" action="/admin/settings/tables">
     <h3>Core: players table</h3>
     <p class="muted small">The master list of every character — citizenid, name (charinfo), money (cash / bank / crypto), job and license. Every other table is linked to it by citizenid.</p>
     <div class="trow core">
@@ -67,7 +68,7 @@
 
 <section class="card" id="thresholds">
   <h2>Audit thresholds</h2>
-  <form method="post" action="/settings/thresholds" class="formgrid">
+  <form method="post" action="/admin/settings/thresholds" class="formgrid">
     <label>Large transaction ($) <input name="largeTransaction" type="number" value="<%= cfg.thresholds.largeTransaction %>"></label>
     <label>High character balance ($) <input name="highBalance" type="number" value="<%= cfg.thresholds.highBalance %>"></label>
     <label>High shared account balance ($) <input name="highAccountBalance" type="number" value="<%= cfg.thresholds.highAccountBalance %>"></label>
@@ -82,6 +83,6 @@
 <section class="card">
   <h2>Reset</h2>
   <p class="muted small">Settings are stored in <code><%= configFile %></code>. Resetting deletes that file and falls back to environment variables.</p>
-  <form method="post" action="/settings/reset" onsubmit="return confirm('Reset all settings to environment defaults?')"><button class="ghost danger">Reset to defaults</button></form>
+  <form method="post" action="/admin/settings/reset" onsubmit="return confirm('Reset all settings to environment defaults?')"><button class="ghost danger">Reset to defaults</button></form>
 </section>
 <%- include('partials/foot') %>

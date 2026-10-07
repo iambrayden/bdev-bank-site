@@ -7,21 +7,34 @@
 <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-<% if (typeof nav === 'undefined' || nav) { %>
+<% if ((typeof nav === 'undefined' || nav) && user) { %>
 <header class="top">
   <a class="brand" href="/">Bank Audit</a>
   <nav>
-    <% const links = [['/', 'Overview'], ['/players', 'Characters'], ['/accounts', 'Shared accounts'], ['/transactions', 'Transactions'], ['/audit', 'Audit flags'], ['/tables', 'Tables'], ['/settings', 'Settings']]; %>
-    <% for (const [href, label] of links) { const on = href === '/' ? path === '/' : path.startsWith(href); %>
+    <% const links = [
+      ['/', 'Overview', can('dashboard.view')],
+      ['/players', 'Characters', can('players.view')],
+      ['/accounts', 'Shared accounts', can('accounts.view')],
+      ['/transactions', 'Transactions', can('transactions.view')],
+      ['/audit', 'Audit flags', can('audit.view')],
+      ['/cases', 'Cases', can('cases.view') || can('cases.view_all')],
+      ['/tables', 'Tables', can('tables.browse')],
+      ['/admin', 'Admin', can('admin.users') || can('admin.roles') || can('admin.activity') || can('admin.settings')],
+    ]; %>
+    <% for (const [href, label, ok] of links) { if (!ok) continue; const on = href === '/' ? path === '/' : path.startsWith(href) || (href === '/admin' && path.startsWith('/settings')); %>
       <a href="<%= href %>" class="<%= on ? 'on' : '' %>"><%= label %></a>
     <% } %>
   </nav>
+  <% if (can('players.view')) { %>
   <form class="search" action="/players" method="get">
-    <input name="q" placeholder="Name / citizenid / license" aria-label="Search characters">
+    <input name="q" placeholder="Name / citizenid" aria-label="Search characters">
   </form>
-  <% if (authEnabled) { %>
-  <form action="/logout" method="post"><button class="link">Log out</button></form>
   <% } %>
+  <div class="me">
+    <a href="/account" title="My account"><%= user.display_name || user.username %></a>
+    <form action="/logout" method="post"><button class="link">Log out</button></form>
+  </div>
 </header>
 <% } %>
 <main>
+<% if (typeof query !== 'undefined' && query.msg && !(typeof msg !== 'undefined' && msg)) { %><p class="notice"><%= query.msg %></p><% } %>

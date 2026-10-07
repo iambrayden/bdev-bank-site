@@ -1,0 +1,24 @@
+<%- include('../partials/head', { title: 'Users' }) %>
+<h1>Admin</h1>
+<%- include('../partials/admintabs') %>
+<% if (msg) { %><p class="notice"><%= msg %></p><% } %>
+<div class="titlebar"><h2>Users <span class="muted">(<%= users.length %>)</span></h2><a class="btn" href="/admin/users/new">New user</a></div>
+<div class="scroll">
+<table class="data">
+<thead><tr><th>User</th><th>Role</th><th>Overrides</th><th class="r">Permissions</th><th>Status</th><th>Last login</th><th class="r">Sessions</th></tr></thead>
+<tbody>
+<% for (const u of users) { %>
+<tr class="<%= u.disabled ? 'dim' : '' %>">
+  <td><a href="/admin/users/<%= u.id %>"><%= u.username %></a><% if (u.display_name) { %> <span class="muted small"><%= u.display_name %></span><% } %><% if (u.id === user.id) { %> <span class="small muted">(you)</span><% } %></td>
+  <td><% if (u.is_superadmin) { %><span class="sev high">superadmin</span><% } else { %><%= u.role_name || '— none —' %><% } %></td>
+  <td class="small"><% if (u.allow.length) { %><span class="pos">+<%= u.allow.length %></span> <% } %><% if (u.deny.length) { %><span class="neg">−<%= u.deny.length %></span><% } %></td>
+  <td class="r"><%= u.perms %> / <%= total %></td>
+  <td><% if (u.disabled) { %><span class="pill out">disabled</span><% } else if (u.must_change_password) { %><span class="pill">must change password</span><% } else { %><span class="pill in">active</span><% } %></td>
+  <td class="small"><%= u.last_login ? fmt.ago(u.last_login) : 'never' %></td>
+  <td class="r"><%= u.sessions %></td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>
+<%- include('../partials/foot') %>

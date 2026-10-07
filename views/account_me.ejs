@@ -1,0 +1,27 @@
+<%- include('partials/head', { title: 'My account' }) %>
+<% if (msg) { %><p class="notice"><%= msg %></p><% } %>
+<h1>My account</h1>
+<% if (user.must_change_password) { %><p class="warn">Please choose a new password before continuing.</p><% } %>
+<div class="grid2">
+<section class="card">
+  <h2>Change password</h2>
+  <form method="post" action="/account/password" class="stack">
+    <label>Current password <input name="current" type="password" required autocomplete="current-password"></label>
+    <label>New password <input name="password" type="password" required minlength="10" autocomplete="new-password"></label>
+    <label>Confirm new password <input name="confirm" type="password" required minlength="10" autocomplete="new-password"></label>
+    <div class="actions"><button>Change password</button></div>
+  </form>
+</section>
+<section class="card">
+  <h2><%= user.display_name || user.username %></h2>
+  <dl class="kv">
+    <dt>Username</dt><dd><%= user.username %></dd>
+    <dt>Role</dt><dd><%= user.is_superadmin ? 'Superadmin' : (user.role_name || '— none —') %></dd>
+  </dl>
+  <h3>What you can do</h3>
+  <ul class="small">
+  <% for (const g of PERMISSIONS) { for (const [k, label] of g.items) { if (effective.has(k)) { %><li><%= label %></li><% } } } %>
+  </ul>
+</section>
+</div>
+<%- include('partials/foot') %>

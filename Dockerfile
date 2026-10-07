@@ -11,4 +11,4 @@ USER node
 EXPOSE 3000
 VOLUME ["/data"]
 HEALTHCHECK --interval=30s --timeout=5s CMD wget -qO- http://127.0.0.1:3000/healthz || exit 1
-CMD ["node", "src/server.js"]
+CMD ["node", "--disable-warning=ExperimentalWarning", "src/server.js"]

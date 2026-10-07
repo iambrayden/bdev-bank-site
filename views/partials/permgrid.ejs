@@ -1,0 +1,24 @@
+<%# mode: 'checkbox' (roles) or 'tri' (user overrides). chosen: Set for checkbox; u for tri %>
+<div class="permgrid">
+<% for (const g of PERMISSIONS) { %>
+  <fieldset>
+    <legend><%= g.group %></legend>
+    <% for (const [k, label] of g.items) { const locked = !grantable.has(k); %>
+      <% if (mode === 'checkbox') { %>
+        <label class="perm <%= locked ? 'locked' : '' %>"><input type="checkbox" name="permissions" value="<%= k %>" <%= chosen.has(k) ? 'checked' : '' %> <%= locked ? 'disabled' : '' %>>
+          <span><span class="mono small"><%= k %></span><br><%= label %></span></label>
+      <% } else { const cur = u && u.allow.includes(k) ? 'allow' : u && u.deny.includes(k) ? 'deny' : 'inherit'; const fromRole = roleSet.has(k); %>
+        <div class="perm tri <%= locked ? 'locked' : '' %>">
+          <span><span class="mono small"><%= k %></span> <% if (fromRole) { %><span class="pill in small">role</span><% } %><br><%= label %></span>
+          <select name="perm_<%= k %>" <%= locked ? 'disabled' : '' %>>
+            <option value="inherit" <%= cur === 'inherit' ? 'selected' : '' %>>From role (<%= fromRole ? 'yes' : 'no' %>)</option>
+            <option value="allow" <%= cur === 'allow' ? 'selected' : '' %>>Allow</option>
+            <option value="deny" <%= cur === 'deny' ? 'selected' : '' %>>Deny</option>
+          </select>
+        </div>
+      <% } %>
+    <% } %>
+  </fieldset>
+<% } %>
+</div>
+<% if ([...PERMISSIONS.flatMap(g => g.items)].some(([k]) => !grantable.has(k))) { %><p class="small muted">Greyed-out permissions are ones you don't hold yourself, so you can't grant or remove them.</p><% } %>

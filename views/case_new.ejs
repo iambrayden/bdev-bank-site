@@ -1,0 +1,15 @@
+<%- include('partials/head', { title: 'New case' }) %>
+<div class="crumbs"><a href="/cases">Cases</a> / new</div>
+<h1>New case</h1>
+<form class="card stack" method="post" action="/cases">
+  <label>Title <input name="title" required maxlength="200" placeholder="e.g. Money duplication via ATM spam"></label>
+  <label>Summary <textarea name="summary" rows="5" placeholder="What is being investigated and why"></textarea></label>
+  <div class="formgrid">
+    <label>Priority <select name="priority"><% for (const p of PRIORITIES) { %><option <%= p === 'medium' ? 'selected' : '' %>><%= p %></option><% } %></select></label>
+    <% if (users.length) { %>
+    <label>Assign to <select name="assigned_to"><% for (const u of users) { %><option value="<%= u.id %>" <%= u.id === user.id ? 'selected' : '' %>><%= u.display_name || u.username %> (<%= u.username %>)</option><% } %></select></label>
+    <% } %>
+  </div>
+  <div class="actions"><button>Create case</button></div>
+</form>
+<%- include('partials/foot') %>

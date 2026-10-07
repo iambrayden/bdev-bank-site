@@ -1,0 +1,35 @@
+<%- include('../partials/head', { title: r ? r.name : 'New role' }) %>
+<h1>Admin</h1>
+<%- include('../partials/admintabs') %>
+<% if (msg) { %><p class="notice"><%= msg %></p><% } %>
+<div class="crumbs"><a href="/admin/roles">Roles</a> / <%= r ? r.name : 'new' %></div>
+<form method="post" action="<%= r ? `/admin/roles/${r.id}` : '/admin/roles' %>">
+<section class="card">
+  <div class="formgrid">
+    <label>Name <input name="name" value="<%= r ? r.name : '' %>" required maxlength="60"></label>
+    <label>Description <input name="description" value="<%= r ? r.description : '' %>" maxlength="300"></label>
+  </div>
+</section>
+<section class="card">
+  <h2>Permissions</h2>
+  <%- include('../partials/permgrid', { mode: 'checkbox', chosen: new Set(r ? r.permissions : []), grantable }) %>
+</section>
+<section class="card">
+  <h2>Table access</h2>
+  <p class="small muted">Which tables this role can browse raw (needs <span class="mono">tables.browse</span>) and see as linked records on character pages (needs <span class="mono">players.linked</span>).</p>
+  <% const t = new Set(r ? r.tables : []); %>
+  <label><input type="checkbox" name="all_tables" value="1" <%= t.has('*') ? 'checked' : '' %>> <b>All tables</b> (including ones added later)</label>
+  <div class="checks">
+    <% for (const name of tables) { %><label class="small mono"><input type="checkbox" name="tables" value="<%= name %>" <%= t.has(name) ? 'checked' : '' %>> <%= name %><% if (configured.has(name)) { %> <span class="pill in">audited</span><% } %></label><% } %>
+  </div>
+</section>
+<div class="actions"><button><%= r ? 'Save role' : 'Create role' %></button></div>
+</form>
+<% if (r) { %>
+<section class="card mt">
+  <h2>Users with this role <span class="muted">(<%= users.length %>)</span></h2>
+  <p><% for (const u of users) { %><a class="tag" href="/admin/users/<%= u.id %>"><%= u.username %></a> <% } %><% if (!users.length) { %><span class="muted">None.</span><% } %></p>
+  <% if (!users.length) { %><form method="post" action="/admin/roles/<%= r.id %>/delete" onsubmit="return confirm('Delete role?')"><button class="ghost danger">Delete role</button></form><% } %>
+</section>
+<% } %>
+<%- include('../partials/foot') %>

@@ -1,0 +1,37 @@
+<%- include('partials/head', { title: 'Cases' }) %>
+<div class="titlebar">
+  <h1>Cases <span class="muted">(<%= list.length %>)</span></h1>
+  <% if (can('cases.create')) { %><a class="btn" href="/cases/new">New case</a><% } %>
+</div>
+<form class="filters" method="get">
+  <input name="q" value="<%= query.q || '' %>" placeholder="Title, summary or case #">
+  <select name="status">
+    <option value="active" <%= status === 'active' ? 'selected' : '' %>>Active (not closed)</option>
+    <option value="" <%= status === '' ? 'selected' : '' %>>All</option>
+    <% for (const st of STATUSES) { %><option value="<%= st %>" <%= status === st ? 'selected' : '' %>><%= st.replace('_', ' ') %></option><% } %>
+  </select>
+  <% if (can('cases.view_all')) { %><label class="small"><input type="checkbox" name="mine" value="1" <%= query.mine === '1' ? 'checked' : '' %>> Only mine</label><% } %>
+  <button>Filter</button>
+</form>
+<div class="scroll">
+<table class="data">
+<thead><tr><th>Case</th><th>Title</th><th>Status</th><th>Priority</th><th class="r">Characters</th><th class="r">Evidence</th><th>Assigned</th><th>Opened by</th><th>Updated</th></tr></thead>
+<tbody>
+<% if (!list.length) { %><tr><td colspan="9" class="muted">No cases.</td></tr><% } %>
+<% for (const c of list) { %>
+<tr>
+  <td class="mono"><a href="/cases/<%= c.id %>"><%= caseNo(c.id) %></a></td>
+  <td><a href="/cases/<%= c.id %>"><%= c.title %></a></td>
+  <td><span class="status <%= c.status %>"><%= c.status.replace('_', ' ') %></span></td>
+  <td><span class="prio <%= c.priority %>"><%= c.priority %></span></td>
+  <td class="r"><%= c.subject_count %></td>
+  <td class="r"><%= c.evidence_count %></td>
+  <td><%= c.assigned_to_name || '—' %></td>
+  <td><%= c.created_by_name || '—' %></td>
+  <td class="small nowrap" title="<%= fmt.date(c.updated_at) %>"><%= fmt.ago(c.updated_at) %></td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>
+<%- include('partials/foot') %>

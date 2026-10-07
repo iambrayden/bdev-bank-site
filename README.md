@@ -42,8 +42,59 @@ can be overridden per table if your schema differs.
 - **Transactions** – search every transaction by name, citizenid, amount,
   type, date range or transaction id, with CSV export.
 - **Audit flags** – see below.
+- **Cases** – case files for investigations (see below).
 - **Tables** – browse and export any configured table.
-- **Settings** – database connection, tables and roles, audit thresholds.
+- **Admin** – users, roles & permissions, activity log, data settings.
+
+## Users, roles and permissions
+
+Everyone signs in with their own username and password. On first start the app
+creates a **superadmin** from `ADMIN_USERNAME` / `ADMIN_PASSWORD`; after that,
+manage accounts in **Admin → Users**.
+
+- **Roles** bundle permissions. Three are created to start with —
+  *Administrator*, *Investigator* and *Viewer* — and you can edit them or add
+  your own in **Admin → Roles & permissions**.
+- **Per-user overrides**: each permission can be set to *from role*, *allow*
+  or *deny* for an individual user.
+- **Table access** per role: which tables can be browsed raw and shown as
+  linked records on character pages.
+- **Superadmins** have every permission and are the only ones who can manage
+  other superadmins. Admins who aren't superadmins can never grant a
+  permission they don't hold themselves.
+- Disabling a user, resetting their password or "sign out everywhere"
+  ends their sessions immediately. New users can be forced to change their
+  password at first login.
+
+| Area | Permissions |
+| --- | --- |
+| Economy data | `dashboard.view`, `players.view`, `money.view` (otherwise every balance and amount is masked), `players.identity` (license, FiveM name, alts), `players.personal` (phone, birthdate), `players.linked` (houses, bills, vehicles, jobs), `transactions.view`, `accounts.view`, `audit.view`, `tables.browse`, `export.csv`, `data.refresh` |
+| Cases | `cases.view` (own / assigned / shared), `cases.view_all`, `cases.create`, `cases.edit`, `cases.comment`, `cases.status`, `cases.assign`, `cases.delete` |
+| Administration | `admin.settings`, `admin.users`, `admin.roles`, `admin.activity` |
+
+**Activity log** (Admin → Activity log) records sign-ins and failed sign-ins,
+every character / account / table viewed, every export, every case change and
+every admin action, with user and IP.
+
+## Cases
+
+Case files collect everything about an investigation in one place:
+
+- **“+ case”** links on every transaction and audit flag, and **Add to
+  case** buttons on character and shared-account pages, add the item to an
+  existing case or start a new one. The characters on either side of a
+  transaction can be added in the same step.
+- Evidence is **snapshotted** when added (amounts, both sides of a transfer,
+  balances), so it survives Renewed-Banking rotating its history or a
+  character being deleted. Character entries show balance *when added* next
+  to the balance *now*.
+- Add free-text notes and links (clips, screenshots, logs) as evidence, with
+  an investigator note on each item.
+- Status (open → investigating → pending review → closed), priority,
+  assignee and collaborators. Collaborators can see a case even without
+  `cases.view_all`.
+- A notes timeline with automatic entries for status and assignment changes.
+- **Print report** (print or save as PDF) and **Evidence CSV**.
 
 ## Audit flags
 
@@ -75,11 +126,14 @@ You can change the thresholds in Settings.
    repo, and choose the **Dockerfile** build pack (or **Docker Compose**
    with `docker-compose.yml`). The port is **3000**.
 3. Set the environment variables (see `.env.example`):
-   - `APP_PASSWORD` (required) – password for the web UI
+   - `ADMIN_USERNAME`, `ADMIN_PASSWORD` – the first superadmin (used only
+     when no users exist yet)
    - `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`
-   - optional: `PLAYERS_TABLE`, `AUDIT_TABLES`, `TZ_DISPLAY`, `SESSION_SECRET`
-4. Add a **persistent storage** volume mounted at `/data`, so settings you
-   change in the UI survive redeploys. The compose file sets this up for you.
+   - optional: `PLAYERS_TABLE`, `AUDIT_TABLES`, `TZ_DISPLAY`, `SESSION_HOURS`
+4. Add a **persistent storage** volume mounted at `/data`. **Required**: it
+   holds users, cases and the activity log (`app.db`) as well as settings
+   (`config.json`). Without it, all of that is lost on redeploy. The compose
+   file sets this up for you. Back up `/data` regularly.
 5. Assign a domain and deploy.
 
 If the game database runs on another machine, allow the Coolify server's IP in
@@ -92,7 +146,7 @@ the MySQL host's firewall, and restrict that user to the IP
 npm install
 # optional: a fictional demo database
 node scripts/demo-seed.js | mysql
-APP_PASSWORD=dev DB_USER=... DB_PASSWORD=... DB_NAME=qbox_demo npm run dev
+ADMIN_PASSWORD=devpassword1 DB_USER=... DB_PASSWORD=... DB_NAME=qbox_demo npm run dev
 npm test
 ```
 

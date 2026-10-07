@@ -1,0 +1,150 @@
+<%- include('partials/head', { title: caseNo(c.id) }) %>
+<% if (msg) { %><p class="notice"><%= msg %></p><% } %>
+<div class="crumbs"><a href="/cases">Cases</a> / <span class="mono"><%= caseNo(c.id) %></span></div>
+<div class="titlebar">
+  <h1><span class="mono muted"><%= caseNo(c.id) %></span> <%= c.title %>
+    <span class="status <%= c.status %>"><%= c.status.replace('_', ' ') %></span> <span class="prio <%= c.priority %>"><%= c.priority %></span></h1>
+  <div class="actions">
+    <a class="btn ghost" href="/cases/<%= c.id %>/print" target="_blank">Print report</a>
+    <% if (can('export.csv')) { %><a class="btn ghost" href="/cases/<%= c.id %>/evidence.csv">Evidence CSV</a><% } %>
+  </div>
+</div>
+
+<div class="grid2">
+  <section class="card">
+    <h2>Summary</h2>
+    <% if (canEdit) { %>
+    <form method="post" action="/cases/<%= c.id %>/edit" class="stack">
+      <label>Title <input name="title" value="<%= c.title %>" maxlength="200"></label>
+      <label>Summary <textarea name="summary" rows="6"><%= c.summary %></textarea></label>
+      <label>Outcome / findings <textarea name="outcome" rows="3" placeholder="Filled in when the case is resolved"><%= c.outcome %></textarea></label>
+      <div class="actions"><button>Save</button></div>
+    </form>
+    <% } else { %>
+      <div class="prewrap"><%= c.summary || 'No summary.' %></div>
+      <% if (c.outcome) { %><h3>Outcome</h3><div class="prewrap"><%= c.outcome %></div><% } %>
+    <% } %>
+  </section>
+
+  <section class="card">
+    <h2>Details</h2>
+    <dl class="kv">
+      <dt>Opened</dt><dd><%= fmt.date(c.created_at) %> by <%= c.created_by_name || '—' %></dd>
+      <dt>Updated</dt><dd><%= fmt.date(c.updated_at) %></dd>
+      <% if (c.closed_at) { %><dt>Closed</dt><dd><%= fmt.date(c.closed_at) %></dd><% } %>
+      <dt>Assigned</dt><dd><%= c.assigned_to_name || '—' %></dd>
+      <dt>Collaborators</dt><dd><%= members.map(m => m.username).join(', ') || '—' %></dd>
+      <% if (can('money.view')) { %><dt>Transaction value</dt><dd class="mono"><%= money(txTotal) %> across <%= evidence.filter(e => e.type === 'transaction').length %> transactions</dd><% } %>
+    </dl>
+    <% if (can('cases.status')) { %>
+    <form method="post" action="/cases/<%= c.id %>/status" class="inline">
+      <select name="status"><% for (const st of STATUSES) { %><option value="<%= st %>" <%= c.status === st ? 'selected' : '' %>><%= st.replace('_', ' ') %></option><% } %></select>
+      <select name="priority"><% for (const p of PRIORITIES) { %><option <%= c.priority === p ? 'selected' : '' %>><%= p %></option><% } %></select>
+      <button>Update status</button>
+    </form>
+    <% } %>
+    <% if (can('cases.assign')) { %>
+    <details class="mt"><summary>Assignment &amp; collaborators</summary>
+      <form method="post" action="/cases/<%= c.id %>/assign" class="stack">
+        <label>Assigned to <select name="assigned_to"><option value="">— nobody —</option><% for (const u of users) { %><option value="<%= u.id %>" <%= c.assigned_to === u.id ? 'selected' : '' %>><%= u.display_name || u.username %> (<%= u.username %>)</option><% } %></select></label>
+        <fieldset><legend class="small">Collaborators (can see this case even without “view all cases”)</legend>
+          <div class="checks"><% const mem = new Set(members.map(m => m.id)); for (const u of users) { %><label class="small"><input type="checkbox" name="members" value="<%= u.id %>" <%= mem.has(u.id) ? 'checked' : '' %>> <%= u.username %></label><% } %></div>
+        </fieldset>
+        <div class="actions"><button>Save assignment</button></div>
+      </form>
+    </details>
+    <% } %>
+    <% if (can('cases.delete')) { %>
+    <form method="post" action="/cases/<%= c.id %>/delete" class="mt" onsubmit="return confirm('Delete this case and all its evidence and notes? This cannot be undone.')"><button class="ghost danger">Delete case</button></form>
+    <% } %>
+  </section>
+</div>
+
+<section class="card">
+  <h2>Characters involved <span class="muted">(<%= subjects.length %>)</span></h2>
+  <div class="scroll">
+  <table class="data">
+    <thead><tr><th>Character</th><th>Involvement</th><th>Note</th><th class="r">Bank + cash when added</th><th class="r">Bank + cash now</th><th>Added</th><% if (canEdit) { %><th></th><% } %></tr></thead>
+    <tbody>
+    <% if (!subjects.length) { %><tr><td colspan="7" class="muted">No characters yet. Add one below, or use “Add to case” on a character page.</td></tr><% } %>
+    <% for (const sub of subjects) { const live = s && s.playerMap.get(sub.citizenid); const then = sub.snapshot || {}; %>
+      <tr>
+        <td><a href="/players/<%= encodeURIComponent(sub.citizenid) %>"><%= (live && live.name) || sub.name || sub.citizenid %></a> <span class="mono muted small"><%= sub.citizenid %></span></td>
+        <td><span class="tag"><%= sub.label %></span></td>
+        <td class="msg"><%= sub.note %></td>
+        <td class="r mono"><%= then.bank !== undefined ? money((then.bank || 0) + (then.cash || 0)) : '' %></td>
+        <td class="r mono"><%= live ? money(live.bank + live.cash) : (s ? 'deleted' : '') %></td>
+        <td class="small nowrap"><%= fmt.date(sub.added_at) %> · <%= sub.added_by_name || '' %></td>
+        <% if (canEdit) { %><td><form method="post" action="/cases/<%= c.id %>/subjects/<%= sub.id %>/delete"><button class="link danger" title="Remove">✕</button></form></td><% } %>
+      </tr>
+    <% } %>
+    </tbody>
+  </table>
+  </div>
+  <% if (canEdit) { %>
+  <form method="post" action="/cases/<%= c.id %>/subjects" class="inline mt">
+    <input name="citizenid" placeholder="citizenid" required class="mono" size="12">
+    <select name="label"><% for (const l of SUBJECT_LABELS) { %><option <%= l === 'subject' ? 'selected' : '' %>><%= l %></option><% } %></select>
+    <input name="note" placeholder="Note (optional)" size="30">
+    <button>Add character</button>
+  </form>
+  <% } %>
+</section>
+
+<section class="card">
+  <h2>Evidence <span class="muted">(<%= evidence.length %>)</span></h2>
+  <% if (!evidence.length) { %><p class="muted">No evidence yet. Use the “+ case” links on transactions and audit flags, or add a note / link below.</p><% } %>
+  <% for (const e of evidence) { %>
+  <article class="evidence" id="ev<%= e.id %>">
+    <header>
+      <span class="tag"><%= EVIDENCE_TYPES[e.type] || e.type %></span>
+      <b><%= red(e.title) %></b>
+      <span class="small muted">added <%= fmt.date(e.added_at) %> by <%= e.added_by_name || '—' %></span>
+      <% if (canEdit && (e.added_by === user.id || can('cases.delete'))) { %>
+      <form method="post" action="/cases/<%= c.id %>/evidence/<%= e.id %>/delete" onsubmit="return confirm('Remove this evidence?')"><button class="link danger" title="Remove">✕</button></form>
+      <% } %>
+    </header>
+    <%- include('partials/evidence', { e }) %>
+    <% if (canEdit) { %>
+    <form method="post" action="/cases/<%= c.id %>/evidence/<%= e.id %>/note" class="inline mt">
+      <input name="note" value="<%= e.note %>" placeholder="Investigator note" class="grow">
+      <button class="ghost">Save note</button>
+    </form>
+    <% } else if (e.note) { %><p class="small"><b>Note:</b> <%= e.note %></p><% } %>
+  </article>
+  <% } %>
+  <% if (canEdit) { %>
+  <details class="mt"><summary>Add a note or link as evidence</summary>
+    <form method="post" action="/cases/<%= c.id %>/evidence" class="stack">
+      <label>Type <select name="type"><option value="note">Note / statement</option><option value="link">Link (clip, screenshot, log)</option></select></label>
+      <label>Title <input name="title" required maxlength="200"></label>
+      <label>URL (for links) <input name="url" type="url" placeholder="https://"></label>
+      <label>Details <textarea name="body" rows="4"></textarea></label>
+      <div class="actions"><button>Add evidence</button></div>
+    </form>
+  </details>
+  <% } %>
+</section>
+
+<section class="card" id="notes">
+  <h2>Notes &amp; timeline</h2>
+  <ol class="timeline">
+  <% for (const n of notes) { %>
+    <li class="<%= n.kind %>">
+      <div class="small muted"><%= fmt.date(n.created_at) %> · <%= n.kind === 'system' ? 'system' : (n.display_name || n.username || 'deleted user') %>
+        <% if (n.kind !== 'system' && (n.user_id === user.id || can('cases.delete'))) { %>
+        <form method="post" action="/cases/<%= c.id %>/notes/<%= n.id %>/delete" class="inline-form" onsubmit="return confirm('Delete this note?')"><button class="link danger small">delete</button></form>
+        <% } %>
+      </div>
+      <div class="prewrap"><%= n.body %></div>
+    </li>
+  <% } %>
+  </ol>
+  <% if (can('cases.comment')) { %>
+  <form method="post" action="/cases/<%= c.id %>/notes" class="stack">
+    <textarea name="body" rows="3" placeholder="Add a note…" required></textarea>
+    <div class="actions"><button>Add note</button></div>
+  </form>
+  <% } %>
+</section>
+<%- include('partials/foot') %>

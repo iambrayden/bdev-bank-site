@@ -3,73 +3,93 @@
 <h1>Economy overview</h1>
 <section class="kpis">
   <div class="kpi"><span>Characters</span><b><%= fmt.int(s.players.length) %></b></div>
-  <div class="kpi"><span>Bank (characters)</span><b><%= fmt.money(totals.bank) %></b></div>
-  <div class="kpi"><span>Cash (characters)</span><b><%= fmt.money(totals.cash) %></b></div>
-  <div class="kpi"><span>Shared accounts</span><b><%= fmt.money(accountTotal) %></b><small><%= s.accounts.length %> accounts</small></div>
-  <div class="kpi"><span>Money in economy</span><b><%= fmt.money(totals.bank + totals.cash + accountTotal) %></b></div>
-  <a class="kpi" href="/audit"><span>Audit flags</span><b><span class="sev high"><%= sev.high %></span> <span class="sev medium"><%= sev.medium %></span> <span class="sev low"><%= sev.low %></span></b><small>high · medium · low</small></a>
+  <div class="kpi"><span>Bank (characters)</span><b><%= money(totals.bank) %></b></div>
+  <div class="kpi"><span>Cash (characters)</span><b><%= money(totals.cash) %></b></div>
+  <div class="kpi"><span>Shared accounts</span><b><%= money(accountTotal) %></b><small><%= s.accounts.length %> accounts</small></div>
+  <div class="kpi"><span>Money in economy</span><b><%= money(totals.bank + totals.cash + accountTotal) %></b></div>
+  <% if (can('audit.view')) { %><a class="kpi" href="/audit"><span>Audit flags</span><b><span class="sev high"><%= sev.high %></span> <span class="sev medium"><%= sev.medium %></span> <span class="sev low"><%= sev.low %></span></b><small>high · medium · low</small></a><% } %>
 </section>
 
+<% if (myCases.length) { %>
+<section class="card">
+  <h2>My active cases <a class="small" href="/cases?mine=1">all →</a></h2>
+  <div class="scroll"><table class="data"><tbody>
+  <% for (const c of myCases) { %><tr><td class="mono small">CASE-<%= String(c.id).padStart(4, '0') %></td><td><a href="/cases/<%= c.id %>"><%= c.title %></a></td><td><span class="status <%= c.status %>"><%= c.status.replace('_', ' ') %></span></td><td><span class="prio <%= c.priority %>"><%= c.priority %></span></td><td class="small muted"><%= fmt.ago(c.updated_at) %></td></tr><% } %>
+  </tbody></table></div>
+</section>
+<% } %>
 <div class="grid2">
-  <section class="card">
+  <% if (can('players.view')) { %>
+<section class="card">
     <h2>Richest characters <a class="small" href="/players?sort=total">all →</a></h2>
     <table class="data">
       <thead><tr><th>Character</th><th>Job</th><th class="r">Cash</th><th class="r">Bank</th></tr></thead>
       <tbody>
       <% for (const p of richest) { %>
         <tr><td><a href="/players/<%= encodeURIComponent(p.citizenid) %>"><%= p.name %></a> <span class="muted mono small"><%= p.citizenid %></span></td>
-        <td><%= p.job ? p.job.label : '' %></td><td class="r mono"><%= fmt.money(p.cash) %></td><td class="r mono"><%= fmt.money(p.bank) %></td></tr>
+        <td><%= p.job ? p.job.label : '' %></td><td class="r mono"><%= money(p.cash) %></td><td class="r mono"><%= money(p.bank) %></td></tr>
       <% } %>
       </tbody>
     </table>
   </section>
+<% } %>
 
-  <section class="card">
+  <% if (can('transactions.view')) { %>
+<section class="card">
     <h2>Personal account flow · last 14 days</h2>
     <% const peak = Math.max(1, ...days.map(d => Math.max(d.in, d.out))); %>
     <div class="flow">
     <% for (const d of days) { %>
-      <div class="flowrow" title="<%= d.key %>: <%= d.n %> tx, in <%= fmt.money(d.in) %>, out <%= fmt.money(d.out) %>">
+      <div class="flowrow" title="<%= d.key %>: <%= d.n %> tx, in <%= money(d.in) %>, out <%= money(d.out) %>">
         <span class="small mono"><%= d.key.slice(5) %></span>
         <div class="bars"><i class="in" style="width:<%= (d.in / peak * 100).toFixed(1) %>%"></i><i class="out" style="width:<%= (d.out / peak * 100).toFixed(1) %>%"></i></div>
-        <span class="small mono r"><%= fmt.money(d.in - d.out) %></span>
+        <span class="small mono r"><%= money(d.in - d.out) %></span>
       </div>
     <% } %>
     </div>
     <p class="small muted"><i class="key in"></i> deposits <i class="key out"></i> withdrawals · right column is net</p>
   </section>
+<% } %>
 
-  <section class="card">
+  <% if (can('accounts.view')) { %>
+<section class="card">
     <h2>Shared accounts <a class="small" href="/accounts">all →</a></h2>
     <table class="data">
       <tbody>
       <% for (const a of topAccounts) { %>
-        <tr><td><a class="tag" href="/accounts/<%= encodeURIComponent(a.id) %>"><%= a.id %></a><% if (a.frozen) { %> <span class="pill out">frozen</span><% } %></td><td class="r mono"><%= fmt.money(a.amount) %></td></tr>
+        <tr><td><a class="tag" href="/accounts/<%= encodeURIComponent(a.id) %>"><%= a.id %></a><% if (a.frozen) { %> <span class="pill out">frozen</span><% } %></td><td class="r mono"><%= money(a.amount) %></td></tr>
       <% } %>
       </tbody>
     </table>
   </section>
+<% } %>
 
-  <section class="card">
+  <% if (can('players.view')) { %>
+<section class="card">
     <h2>Money by job</h2>
     <table class="data">
       <thead><tr><th>Job</th><th class="r">Characters</th><th class="r">Cash + bank</th></tr></thead>
       <tbody>
       <% for (const j of jobs) { %>
-        <tr><td><%= j.name %></td><td class="r"><%= j.n %></td><td class="r mono"><%= fmt.money(j.money) %></td></tr>
+        <tr><td><%= j.name %></td><td class="r"><%= j.n %></td><td class="r mono"><%= money(j.money) %></td></tr>
       <% } %>
       </tbody>
     </table>
   </section>
+<% } %>
 </div>
 
+<% if (can('audit.view')) { %>
 <section class="card">
   <h2>High-severity flags <a class="small" href="/audit">all flags →</a></h2>
   <%- include('partials/flags', { list: flags }) %>
 </section>
+<% } %>
 
+<% if (can('transactions.view')) { %>
 <section class="card">
-  <h2>Recent large transactions (≥ <%= fmt.money(th.largeTransaction) %>) <a class="small" href="/transactions?min=<%= th.largeTransaction %>">all →</a></h2>
+  <h2>Recent large transactions (≥ <%= money(th.largeTransaction) %>) <a class="small" href="/transactions?min=<%= th.largeTransaction %>">all →</a></h2>
   <%- include('partials/tx', { list: bigTx, showAccount: true }) %>
 </section>
+<% } %>
 <%- include('partials/foot') %>

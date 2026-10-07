@@ -1,9 +1,10 @@
 <%- include('partials/head', { title: 'Log in', nav: false }) %>
 <form class="card login" method="post" action="/login">
   <h1>Bank Audit</h1>
-  <p class="muted">Read-only economy auditor.</p>
+  <p class="muted">Sign in with the account your administrator gave you.</p>
   <% if (error) { %><p class="err"><%= error %></p><% } %>
-  <label>Password <input type="password" name="password" autofocus required autocomplete="current-password"></label>
+  <label>Username <input name="username" value="<%= username %>" autofocus required autocomplete="username" autocapitalize="off"></label>
+  <label>Password <input type="password" name="password" required autocomplete="current-password"></label>
   <button>Log in</button>
 </form>
 <%- include('partials/foot') %>

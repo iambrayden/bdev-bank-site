@@ -20,9 +20,9 @@
   <label class="small">To <input name="to" type="date" value="<%= query.to || '' %>"></label>
   <button>Search</button>
   <a class="btn ghost" href="/transactions">Clear</a>
-  <a class="btn ghost" href="/transactions<%= fmt.qs(query, { format: 'csv', page: '' }) %>">Export CSV</a>
+  <% if (can('export.csv')) { %><a class="btn ghost" href="/transactions<%= fmt.qs(query, { format: 'csv', page: '' }) %>">Export CSV</a><% } %>
 </form>
-<p class="muted"><%= fmt.int(pg.total) %> matching · deposits <span class="pos mono"><%= fmt.money(sum.in) %></span> · withdrawals <span class="neg mono"><%= fmt.money(sum.out) %></span></p>
+<p class="muted"><%= fmt.int(pg.total) %> matching · deposits <span class="pos mono"><%= money(sum.in) %></span> · withdrawals <span class="neg mono"><%= money(sum.out) %></span></p>
 <%- include('partials/tx', { list: pg.items, showAccount: true }) %>
 <%- include('partials/pager') %>
 <%- include('partials/foot') %>

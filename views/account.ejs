@@ -1,8 +1,11 @@
 <%- include('partials/head', { title: a.id }) %>
 <div class="crumbs"><a href="/accounts">Shared accounts</a> / <%= a.id %></div>
+<div class="titlebar">
 <h1><%= a.id %> <% if (a.frozen) { %><span class="pill out">frozen</span><% } %></h1>
+<% if (can('cases.edit') || can('cases.create')) { %><a class="btn" href="/cases/attach?type=account&ref=<%= encodeURIComponent(a.id) %>">Add to case</a><% } %>
+</div>
 <section class="kpis">
-  <div class="kpi"><span>Balance</span><b><%= fmt.money(a.amount) %></b></div>
+  <div class="kpi"><span>Balance</span><b><%= money(a.amount) %></b></div>
   <div class="kpi"><span>Transactions on record</span><b><%= fmt.int(a.txCount) %></b></div>
   <div class="kpi"><span>Creator</span><b class="small"><% if (a.creator) { const o = s.playerMap.get(a.creator); %><a href="/players/<%= encodeURIComponent(a.creator) %>"><%= o ? o.name : a.creator %></a><% } else { %>— (job account)<% } %></b></div>
 </section>
@@ -17,16 +20,18 @@
   <% if (!members.length) { %><p class="muted">No characters have this job.</p><% } else { %>
   <table class="data"><tbody>
   <% for (const p of members) { const g = p.groups.find(x => x.group === a.id); %>
-    <tr><td><a href="/players/<%= encodeURIComponent(p.citizenid) %>"><%= p.name %></a></td><td class="small">grade <%= g ? g.grade : (p.job && p.job.grade) %></td><td class="r mono"><%= fmt.money(p.cash + p.bank) %></td></tr>
+    <tr><td><a href="/players/<%= encodeURIComponent(p.citizenid) %>"><%= p.name %></a></td><td class="small">grade <%= g ? g.grade : (p.job && p.job.grade) %></td><td class="r mono"><%= money(p.cash + p.bank) %></td></tr>
   <% } %>
   </tbody></table>
   <% } %>
 </section>
 </div>
-<section class="card"><h2>Audit flags</h2><%- include('partials/flags', { list: flags }) %></section>
+<% if (can('audit.view')) { %><section class="card"><h2>Audit flags</h2><%- include('partials/flags', { list: flags }) %></section><% } %>
+<% if (can('transactions.view')) { %>
 <section class="card">
   <h2>Transactions <a class="small" href="/transactions?account=<%= encodeURIComponent(a.id) %>&scope=shared">search / export →</a></h2>
   <%- include('partials/tx', { list: tx.items, showAccount: false }) %>
   <%- include('partials/pager', { pg: tx }) %>
 </section>
+<% } %>
 <%- include('partials/foot') %>

@@ -1,8 +1,8 @@
 <div class="scroll">
 <table class="data">
-<thead><tr><th>Time</th><% if (showAccount) { %><th>Account</th><% } %><th>Type</th><th class="r">Amount</th><th>From</th><th>To</th><th>Message</th><th>ID</th></tr></thead>
+<thead><tr><th>Time</th><% if (showAccount) { %><th>Account</th><% } %><th>Type</th><th class="r">Amount</th><th>From</th><th>To</th><th>Message</th><th>ID</th><% if (can('cases.edit') || can('cases.create')) { %><th></th><% } %></tr></thead>
 <tbody>
-<% if (!list.length) { %><tr><td colspan="8" class="muted">No transactions.</td></tr><% } %>
+<% if (!list.length) { %><tr><td colspan="9" class="muted">No transactions.</td></tr><% } %>
 <% for (const t of list) { const big = t.amount >= th.largeTransaction; %>
 <tr class="<%= big ? 'hl' : '' %>">
   <td class="nowrap" title="<%= fmt.ago(t.time) %>"><%= fmt.date(t.time) %></td>
@@ -10,11 +10,12 @@
   <td class="nowrap"><% if (t.accountType === 'personal') { const o = s.playerMap.get(t.account); %><a href="/players/<%= encodeURIComponent(t.account) %>"><%= o ? o.name : t.account %></a> <span class="muted mono"><%= t.account %></span><% } else { %><a href="/accounts/<%= encodeURIComponent(t.account) %>" class="tag"><%= t.account %></a><% } %></td>
   <% } %>
   <td><span class="pill <%= t.signed < 0 ? 'out' : 'in' %>"><%= t.type %></span></td>
-  <td class="r mono <%= t.signed < 0 ? 'neg' : 'pos' %>"><%= t.signed < 0 ? '-' : '+' %><%= fmt.money(t.amount) %></td>
+  <td class="r mono <%= t.signed < 0 ? 'neg' : 'pos' %>"><%= t.signed < 0 ? '-' : '+' %><%= money(t.amount) %></td>
   <td><%- include('person', { who: t.issuer }) %></td>
   <td><%- include('person', { who: t.receiver }) %></td>
-  <td class="msg"><%= t.message %><% if (t.title && !/^Personal Account/.test(t.title)) { %> <span class="muted">(<%= t.title %>)</span><% } %></td>
+  <td class="msg"><%= red(t.message) %><% if (t.title && !/^Personal Account/.test(t.title)) { %> <span class="muted">(<%= t.title %>)</span><% } %></td>
   <td class="mono muted small" title="<%= t.trans_id %>"><%= String(t.trans_id || '').slice(0, 8) %></td>
+  <% if (can('cases.edit') || can('cases.create')) { %><td><a class="addcase" title="Add to case" href="/cases/attach?<%= new URLSearchParams({ type: 'transaction', ref: t.trans_id || '', account: t.account, time: t.time }) %>">+ case</a></td><% } %>
 </tr>
 <% } %>
 </tbody>

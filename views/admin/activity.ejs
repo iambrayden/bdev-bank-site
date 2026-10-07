@@ -1,0 +1,17 @@
+<%- include('../partials/head', { title: 'Activity log' }) %>
+<h1>Admin</h1>
+<%- include('../partials/admintabs') %>
+<h2>Activity log <span class="muted">(<%= fmt.int(pg.total) %>)</span></h2>
+<p class="small muted">Every sign-in, character / account / table view, export, case change and admin action is recorded here.</p>
+<form class="filters" method="get">
+  <select name="user"><option value="">Any user</option><% for (const u of users) { %><option <%= query.user === u.username ? 'selected' : '' %>><%= u.username %></option><% } %></select>
+  <select name="action"><option value="">Any action</option>
+    <% for (const pre of ['auth.', 'view.', 'export.', 'case.', 'admin.']) { %><option value="<%= pre %>" <%= query.action === pre ? 'selected' : '' %>><%= pre %>*</option><% } %>
+    <% for (const a of actions) { %><option <%= query.action === a ? 'selected' : '' %>><%= a %></option><% } %>
+  </select>
+  <input name="q" value="<%= query.q || '' %>" placeholder="Target or detail">
+  <button>Filter</button>
+</form>
+<%- include('../partials/activity', { rows }) %>
+<%- include('../partials/pager') %>
+<%- include('../partials/foot') %>

@@ -11,14 +11,14 @@
     <% for (const c of codes) { %><option <%= query.code === c ? 'selected' : '' %>><%= c %></option><% } %>
   </select>
   <button>Filter</button>
-  <a class="btn ghost" href="/audit<%= fmt.qs(query, { format: 'csv', page: '' }) %>">Export CSV</a>
+  <% if (can('export.csv')) { %><a class="btn ghost" href="/audit<%= fmt.qs(query, { format: 'csv', page: '' }) %>">Export CSV</a><% } %>
 </form>
 <details class="help">
   <summary>What gets flagged</summary>
   <dl class="kv">
-    <dt>LARGE_TX</dt><dd>Any single transaction ≥ <%= fmt.money(th.largeTransaction) %> (high at 5×).</dd>
-    <dt>HIGH_BALANCE</dt><dd>Character cash + bank ≥ <%= fmt.money(th.highBalance) %>.</dd>
-    <dt>HIGH_ACCOUNT_BALANCE</dt><dd>Shared / society account ≥ <%= fmt.money(th.highAccountBalance) %>.</dd>
+    <dt>LARGE_TX</dt><dd>Any single transaction ≥ <%= money(th.largeTransaction) %> (high at 5×).</dd>
+    <dt>HIGH_BALANCE</dt><dd>Character cash + bank ≥ <%= money(th.highBalance) %>.</dd>
+    <dt>HIGH_ACCOUNT_BALANCE</dt><dd>Shared / society account ≥ <%= money(th.highAccountBalance) %>.</dd>
     <dt>NEGATIVE_BALANCE</dt><dd>Any negative cash, bank, crypto or account balance.</dd>
     <dt>BURST</dt><dd>≥ <%= th.burstCount %> transactions on one account within <%= th.burstMinutes %> minutes (exploit / script spam).</dd>
     <dt>ALT_TRANSFER</dt><dd>Money sent between two characters that share the same FiveM license.</dd>
@@ -27,7 +27,7 @@
     <dt>ORPHAN_RECORDS / ORPHAN_AUTH</dt><dd>Vehicles, houses, bills, history or account access tied to a citizenid that isn't in the players table.</dd>
     <dt>FROZEN</dt><dd>Frozen accounts (informational).</dd>
   </dl>
-  <p>Thresholds are adjustable in <a href="/settings#thresholds">Settings</a>.</p>
+  <p>Thresholds are adjustable in <a href="/admin/settings#thresholds">Settings</a>.</p>
 </details>
 <%- include('partials/flags', { list: pg.items }) %>
 <%- include('partials/pager') %>

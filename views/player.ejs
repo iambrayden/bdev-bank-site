@@ -1,15 +1,18 @@
 <%- include('partials/head', { title: p ? p.name : cid }) %>
 <%- include('partials/warnings') %>
 <div class="crumbs"><a href="/players">Characters</a> / <span class="mono"><%= cid %></span></div>
+<div class="titlebar">
 <h1><%= p ? p.name : 'Unknown character' %> <span class="muted mono"><%= cid %></span><% if (p && p.frozen) { %> <span class="pill out">frozen</span><% } %></h1>
+<% if (can('cases.edit') || can('cases.create')) { %><a class="btn" href="/cases/attach?type=player&ref=<%= encodeURIComponent(cid) %>">Add to case</a><% } %>
+</div>
 <% if (!p) { %><p class="warn">This citizenid is not in the players table — the character may have been deleted. Records below still reference it.</p><% } %>
 
 <% if (p) { %>
 <section class="kpis">
-  <div class="kpi"><span>Bank</span><b><%= fmt.money(p.bank) %></b></div>
-  <div class="kpi"><span>Cash</span><b><%= fmt.money(p.cash) %></b></div>
+  <div class="kpi"><span>Bank</span><b><%= money(p.bank) %></b></div>
+  <div class="kpi"><span>Cash</span><b><%= money(p.cash) %></b></div>
   <div class="kpi"><span>Crypto</span><b><%= fmt.int(p.crypto) %></b></div>
-  <div class="kpi"><span>History in / out</span><b class="small"><span class="pos"><%= fmt.money(inflow) %></span> / <span class="neg"><%= fmt.money(outflow) %></span></b><small><%= tx.total %> transactions on record</small></div>
+  <% if (can('transactions.view')) { %><div class="kpi"><span>History in / out</span><b class="small"><span class="pos"><%= money(inflow) %></span> / <span class="neg"><%= money(outflow) %></span></b><small><%= tx.total %> transactions on record</small></div><% } %>
 </section>
 
 <div class="grid2">
@@ -17,38 +20,56 @@
   <h2>Character</h2>
   <dl class="kv">
     <dt>Citizen ID</dt><dd class="mono"><%= p.citizenid %></dd>
+    <% if (can('players.identity')) { %>
     <dt>FiveM name</dt><dd><%= p.account %></dd>
     <dt>License</dt><dd class="mono small"><%= p.license %></dd>
+    <% } %>
+    <% if (can('players.personal')) { %>
     <% if (p.phone) { %><dt>Phone</dt><dd><%= p.phone %></dd><% } %>
     <% if (p.birthdate) { %><dt>Birthdate</dt><dd><%= p.birthdate %></dd><% } %>
+    <% } %>
     <dt>Job</dt><dd><%= p.job ? `${p.job.label} (${p.job.name})` : '—' %><% if (p.job && p.job.grade !== undefined) { %> · <%= p.job.grade %><% } %><% if (p.job && p.job.onduty) { %> · <span class="pill in">on duty</span><% } %></dd>
     <% if (p.gang) { %><dt>Gang</dt><dd><%= p.gang.label %></dd><% } %>
     <% if (p.groups.length) { %><dt>Groups</dt><dd><% for (const g of p.groups) { %><a class="tag" href="/players?job=<%= encodeURIComponent(g.group) %>"><%= g.group %> · <%= g.type %> <%= g.grade %></a> <% } %></dd><% } %>
-    <% for (const [k, v] of Object.entries(p.otherMoney)) { %><dt><%= k %></dt><dd class="mono"><%= v %></dd><% } %>
+    <% if (can('money.view')) for (const [k, v] of Object.entries(p.otherMoney)) { %><dt><%= k %></dt><dd class="mono"><%= v %></dd><% } %>
     <dt>Last updated</dt><dd><%= p.lastUpdated %></dd>
   </dl>
 </section>
 <section class="card">
+  <% if (can('cases.view') || can('cases.view_all')) { %>
+  <h2>Cases <span class="muted">(<%= cases.length %>)</span></h2>
+  <% if (!cases.length) { %><p class="muted">Not part of any case you can see.</p><% } else { %>
+  <table class="data"><tbody>
+  <% for (const c of cases) { %><tr><td><a href="/cases/<%= c.id %>"><%= c.title %></a></td><td><span class="status <%= c.status %>"><%= c.status.replace('_', ' ') %></span></td></tr><% } %>
+  </tbody></table>
+  <% } %>
+  <% } %>
+  <% if (can('players.identity')) { %>
   <h2>Other characters on this license <span class="muted">(<%= alts.length %>)</span></h2>
   <% if (!alts.length) { %><p class="muted">None.</p><% } else { %>
   <table class="data"><tbody>
-  <% for (const a of alts) { %><tr><td><a href="/players/<%= encodeURIComponent(a.citizenid) %>"><%= a.name %></a> <span class="muted mono small"><%= a.citizenid %></span></td><td class="r mono"><%= fmt.money(a.cash + a.bank) %></td></tr><% } %>
+  <% for (const a of alts) { %><tr><td><a href="/players/<%= encodeURIComponent(a.citizenid) %>"><%= a.name %></a> <span class="muted mono small"><%= a.citizenid %></span></td><td class="r mono"><%= money(a.cash + a.bank) %></td></tr><% } %>
   </tbody></table>
   <% } %>
+  <% } %>
+  <% if (can('accounts.view')) { %>
   <h2>Shared accounts with access <span class="muted">(<%= accounts.length %>)</span></h2>
   <% if (!accounts.length) { %><p class="muted">None.</p><% } else { %>
   <table class="data"><tbody>
-  <% for (const a of accounts) { %><tr><td><a class="tag" href="/accounts/<%= encodeURIComponent(a.id) %>"><%= a.id %></a><% if (a.creator === cid) { %> <span class="muted small">creator</span><% } %></td><td class="r mono"><%= fmt.money(a.amount) %></td></tr><% } %>
+  <% for (const a of accounts) { %><tr><td><a class="tag" href="/accounts/<%= encodeURIComponent(a.id) %>"><%= a.id %></a><% if (a.creator === cid) { %> <span class="muted small">creator</span><% } %></td><td class="r mono"><%= money(a.amount) %></td></tr><% } %>
   </tbody></table>
+  <% } %>
   <% } %>
 </section>
 </div>
 <% } %>
 
+<% if (can('audit.view')) { %>
 <section class="card" id="flags">
   <h2>Audit flags <span class="muted">(<%= flags.length %>)</span></h2>
   <%- include('partials/flags', { list: flags }) %>
 </section>
+<% } %>
 
 <% if (counterparties.length) { %>
 <section class="card">
@@ -57,19 +78,21 @@
     <thead><tr><th>Name</th><th class="r">Transactions</th><th class="r">Sent to</th><th class="r">Received from</th></tr></thead>
     <tbody>
     <% for (const c of counterparties) { const same = p && c.cid && s.playerMap.get(c.cid)?.license === p.license; %>
-      <tr class="<%= same ? 'hl' : '' %>"><td><% if (c.cid) { %><a href="/players/<%= encodeURIComponent(c.cid) %>"><%= c.name %></a><% } else { %><%= c.name %><% } %><% if (same) { %> <span class="sev high">same license</span><% } %></td>
-      <td class="r"><%= c.n %></td><td class="r mono neg"><%= c.sent ? fmt.money(c.sent) : '' %></td><td class="r mono pos"><%= c.received ? fmt.money(c.received) : '' %></td></tr>
+      <tr class="<%= same && can('players.identity') ? 'hl' : '' %>"><td><% if (c.cid) { %><a href="/players/<%= encodeURIComponent(c.cid) %>"><%= c.name %></a><% } else { %><%= c.name %><% } %><% if (same && can('players.identity')) { %> <span class="sev high">same license</span><% } %></td>
+      <td class="r"><%= c.n %></td><td class="r mono neg"><%= c.sent ? money(c.sent) : '' %></td><td class="r mono pos"><%= c.received ? money(c.received) : '' %></td></tr>
     <% } %>
     </tbody>
   </table>
 </section>
 <% } %>
 
+<% if (can('transactions.view')) { %>
 <section class="card">
   <h2>Personal transactions <a class="small" href="/transactions?account=<%= encodeURIComponent(cid) %>&scope=personal">search / export →</a></h2>
   <%- include('partials/tx', { list: tx.items, showAccount: false }) %>
   <%- include('partials/pager', { pg: tx }) %>
 </section>
+<% } %>
 
 <% for (const sec of linked) { const role = ROLES[sec.table.role] || ROLES.generic; %>
 <section class="card">
@@ -78,7 +101,7 @@
     <% if (sec.table.role === 'house_bills' && sec.cols.total && sec.cols.paid) {
          const unpaid = sec.rows.filter(r => !Number(r[sec.cols.paid]));
          const sum = (rs) => rs.reduce((a, r) => a + Number(r[sec.cols.total] || 0), 0); %>
-      <p>Total billed <b class="mono"><%= fmt.money(sum(sec.rows)) %></b> · unpaid <b class="mono <%= unpaid.length ? 'neg' : '' %>"><%= fmt.money(sum(unpaid)) %></b> (<%= unpaid.length %> bills)<%= sec.rows.length >= 500 ? ' · showing first 500' : '' %></p>
+      <p>Total billed <b class="mono"><%= money(sum(sec.rows)) %></b> · unpaid <b class="mono <%= unpaid.length ? 'neg' : '' %>"><%= money(sum(unpaid)) %></b> (<%= unpaid.length %> bills)<%= sec.rows.length >= 500 ? ' · showing first 500' : '' %></p>
     <% } %>
     <%- include('partials/rows', { columns: sec.columns, rows: sec.rows, linkCols: ['citizenid','owner','creator'].map(k => sec.cols[k]).filter(Boolean) }) %>
   <% } %>

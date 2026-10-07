@@ -1,7 +1,7 @@
 </main>
-<% if (typeof s !== 'undefined' && s) { %>
+<% if (typeof s !== 'undefined' && s && s.loadedAt) { %>
 <footer>
-  Data loaded <%= fmt.ago(Math.floor(s.loadedAt/1000)) || 'just now' %> · <a href="?<%= new URLSearchParams({ ...query, refresh: 1 }) %>">refresh</a> · times in <%= fmt.TZ %> · read-only
+  Data loaded <%= fmt.ago(Math.floor(s.loadedAt/1000)) || 'just now' %><% if (can('data.refresh')) { %> · <a href="?<%= new URLSearchParams({ ...query, refresh: 1 }) %>">refresh</a><% } %> · times in <%= fmt.TZ %> · read-only
 </footer>
 <% } %>
 </body>

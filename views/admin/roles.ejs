@@ -1,0 +1,22 @@
+<%- include('../partials/head', { title: 'Roles' }) %>
+<h1>Admin</h1>
+<%- include('../partials/admintabs') %>
+<% if (msg) { %><p class="notice"><%= msg %></p><% } %>
+<div class="titlebar"><h2>Roles</h2><a class="btn" href="/admin/roles/new">New role</a></div>
+<div class="scroll">
+<table class="data">
+<thead><tr><th>Role</th><th>Description</th><th class="r">Permissions</th><th>Tables</th><th class="r">Users</th></tr></thead>
+<tbody>
+<% for (const r of roles) { %>
+<tr>
+  <td><a href="/admin/roles/<%= r.id %>"><%= r.name %></a></td>
+  <td class="small"><%= r.description %></td>
+  <td class="r"><%= r.permissions.length %> / <%= total %></td>
+  <td class="small"><%= r.tables.includes('*') ? 'all' : r.tables.length ? r.tables.join(', ') : 'none' %></td>
+  <td class="r"><%= r.user_count %></td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>
+<%- include('../partials/foot') %>

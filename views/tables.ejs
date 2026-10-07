@@ -1,10 +1,10 @@
 <%- include('partials/head', { title: 'Tables' }) %>
 <h1>Configured tables</h1>
-<p class="muted">Every table here is linked to the core players table by citizenid. Add or change tables in <a href="/settings#tables">Settings</a>.</p>
+<p class="muted">Every table here is linked to the core players table by citizenid. Add or change tables in <a href="/admin/settings#tables">Settings</a>.</p>
 <table class="data">
 <thead><tr><th>Table</th><th>Role</th><th class="r">Rows</th><th></th></tr></thead>
 <tbody>
-<% configured.forEach((t, i) => { const r = ROLES[t.role] || ROLES.generic; %>
+<% configured.forEach((t) => { const r = ROLES[t.role] || ROLES.generic; const i = t.name === coreName ? 0 : 1; %>
 <tr class="<%= i === 0 ? 'core' : '' %>">
   <td class="mono"><%= t.name %><% if (i === 0) { %> <span class="pill in">core</span><% } %></td>
   <td><%= r.label %><br><span class="small muted"><%= r.description %></span></td>

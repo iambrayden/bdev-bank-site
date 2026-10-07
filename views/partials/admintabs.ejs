@@ -1,0 +1,5 @@
+<nav class="tabs">
+  <% for (const [href, label, p] of [['/admin/users', 'Users', 'admin.users'], ['/admin/roles', 'Roles & permissions', 'admin.roles'], ['/admin/activity', 'Activity log', 'admin.activity'], ['/admin/settings', 'Data settings', 'admin.settings']]) { if (!can(p)) continue; %>
+    <a href="<%= href %>" class="<%= path.startsWith(href) ? 'on' : '' %>"><%= label %></a>
+  <% } %>
+</nav>

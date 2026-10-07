@@ -382,9 +382,29 @@ function computeFlags(snap, th) {
   for (const cid of snap.frozenPersonal) add({ severity: 'info', code: 'FROZEN', title: `Personal account ${cid} is frozen`, detail: snap.playerMap.get(cid)?.name || '', citizenid: cid, account: cid, accountType: 'personal' });
   for (const a of snap.accounts) if (a.frozen) add({ severity: 'info', code: 'FROZEN', title: `Account ${a.id} is frozen`, detail: '', account: a.id, accountType: 'shared' });
 
+  // Stable id per flag, so a flag can be attached to a case as evidence.
+  for (const f of flags) f.id = require('crypto').createHash('sha1').update([f.code, f.citizenid, f.account, f.trans_id, f.time, f.title].join('|')).digest('hex').slice(0, 16);
+
   const rank = { high: 0, medium: 1, low: 2, info: 3 };
   flags.sort((a, b) => rank[a.severity] - rank[b.severity] || (b.amount || 0) - (a.amount || 0) || (b.time || 0) - (a.time || 0));
   return flags;
+}
+
+// house name -> { house_label, house_price } from the house_locations table(s).
+async function houseInfo(names) {
+  const out = new Map();
+  const wanted = [...new Set(names.filter(Boolean).map(String))];
+  if (!wanted.length) return out;
+  for (const t of tablesByRole('house_locations')) {
+    try {
+      const c = await resolveCols(t);
+      if (!c.name) continue;
+      const sel = [`${db.id(c.name)} AS n`, c.label ? `${db.id(c.label)} AS l` : "'' AS l", c.price ? `${db.id(c.price)} AS p` : "'' AS p"];
+      const rows = await db.query(`SELECT ${sel.join(', ')} FROM ${db.id(t.name)} WHERE ${db.id(c.name)} IN (?)`, [wanted]);
+      for (const r of rows) out.set(String(r.n), { house_label: r.l, house_price: r.p });
+    } catch {}
+  }
+  return out;
 }
 
 // Rows from every non-core configured table that reference this character.
@@ -415,7 +435,15 @@ async function linkedRows(cid) {
     if (!where.length) continue;
     try {
       const rows = await db.query(`SELECT * FROM ${db.id(t.name)} WHERE ${where.map((w) => w.sql).join(' OR ')} LIMIT 500`, params);
-      sections.push({ table: t, cols: c, columns: c._all, rows });
+      let columns = c._all;
+      if (t.role === 'player_houses' && c.house && rows.length) {
+        const info = await houseInfo(rows.map((r) => r[c.house]));
+        if (info.size) {
+          for (const r of rows) Object.assign(r, info.get(String(r[c.house])) || { house_label: '', house_price: '' });
+          columns = [c.house, 'house_label', 'house_price', ...columns.filter((x) => x !== c.house)];
+        }
+      }
+      sections.push({ table: t, cols: c, columns, rows });
     } catch (e) {
       sections.push({ table: t, error: e.message, rows: [], columns: [] });
     }
@@ -423,4 +451,4 @@ async function linkedRows(cid) {
   return sections;
 }
 
-module.exports = { snapshot, invalidate, computeFlags, linkedRows, parseJson, cidForName, resolveCols, normalizeTx };
+module.exports = { houseInfo, snapshot, invalidate, computeFlags, linkedRows, parseJson, cidForName, resolveCols, normalizeTx };

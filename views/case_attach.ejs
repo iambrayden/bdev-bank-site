@@ -1,0 +1,43 @@
+<%- include('partials/head', { title: 'Add to case' }) %>
+<h1>Add to case</h1>
+<section class="card">
+  <h2><%= EVIDENCE_TYPES[ev.type] || 'Character' %>: <%= red(ev.title) %></h2>
+  <% if (ev.type !== 'player') { %><%- include('partials/evidence', { e: ev }) %><% } else if (ev.data.name) { %>
+    <p><b><%= ev.data.name %></b> · <span class="mono"><%= ev.ref %></span> · <%= ev.data.job %> · bank <%= money(ev.data.bank) %> · cash <%= money(ev.data.cash) %></p>
+  <% } %>
+  <p class="small muted">A snapshot of this data is saved with the case, so it stays even after the game rotates its history.</p>
+</section>
+
+<% const relatedCids = (ev.cids || []).filter(c => ev.type !== 'player'); %>
+<div class="grid2">
+<% if (cases.length) { %>
+<form class="card stack" method="post" action="/cases/attach">
+  <h2>Existing case</h2>
+  <input type="hidden" name="type" value="<%= ev.type %>"><input type="hidden" name="ref" value="<%= ev.ref %>">
+  <input type="hidden" name="account" value="<%= q.account || '' %>"><input type="hidden" name="time" value="<%= q.time || '' %>">
+  <label>Case <select name="case_id"><% for (const c of cases) { %><option value="<%= c.id %>"><%= caseNo(c.id) %> · <%= c.title %></option><% } %></select></label>
+  <% if (ev.type === 'player') { %><label>Involvement <select name="label"><% for (const l of SUBJECT_LABELS) { %><option <%= l === 'subject' ? 'selected' : '' %>><%= l %></option><% } %></select></label><% } %>
+  <label>Note <textarea name="note" rows="3" placeholder="Why this matters"></textarea></label>
+  <% if (relatedCids.length) { %>
+  <fieldset><legend class="small">Also add these characters to the case</legend>
+  <% for (const c of relatedCids) { const p = s.playerMap.get(c); %><label class="small"><input type="checkbox" name="add_subject" value="<%= c %>" checked> <%= p ? p.name : c %> <span class="mono muted"><%= c %></span></label><% } %>
+  </fieldset>
+  <% } %>
+  <div class="actions"><button>Add to case</button></div>
+</form>
+<% } %>
+<% if (can('cases.create')) { %>
+<form class="card stack" method="post" action="/cases">
+  <h2>New case</h2>
+  <input type="hidden" name="attach_type" value="<%= ev.type %>"><input type="hidden" name="attach_ref" value="<%= ev.ref %>">
+  <input type="hidden" name="attach_account" value="<%= q.account || '' %>"><input type="hidden" name="attach_time" value="<%= q.time || '' %>">
+  <label>Title <input name="title" required maxlength="200"></label>
+  <label>Summary <textarea name="summary" rows="3"></textarea></label>
+  <label>Priority <select name="priority"><% for (const p of PRIORITIES) { %><option <%= p === 'medium' ? 'selected' : '' %>><%= p %></option><% } %></select></label>
+  <% for (const c of relatedCids) { %><input type="hidden" name="add_subject" value="<%= c %>"><% } %>
+  <div class="actions"><button>Create case with this item</button></div>
+</form>
+<% } %>
+</div>
+<% if (!cases.length && !can('cases.create')) { %><p class="muted">You have no open cases you can edit.</p><% } %>
+<%- include('partials/foot') %>
