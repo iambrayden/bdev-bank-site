@@ -283,3 +283,100 @@ header.top .search, header.top .me { flex-shrink: 0; }
   header.top nav::-webkit-scrollbar { display: none; }
 }
 .govfoot.rp { font-style: italic; opacity: 0.8; }
+
+/* =========================================================
+   Mobile (auto-detected by screen width — same URLs, no separate site)
+   ========================================================= */
+.navtoggle, .burger { display: none; }
+
+@media (max-width: 760px) {
+  body { font-size: 15px; -webkit-text-size-adjust: 100%; }
+  main { padding: 12px 12px 32px; }
+  h1 { font-size: 21px; }
+  .govbanner { font-size: 9px; letter-spacing: 0.08em; padding: 3px 8px; }
+
+  /* header: brand + ☰, menu drops down */
+  header.top { flex-wrap: wrap; padding: 8px 12px; gap: 0; min-height: 52px; position: sticky; top: 0; }
+  header.top .brand { border-right: none; padding-right: 0; flex: 1; }
+  header.top .brand .seal { width: 30px; height: 30px; }
+  .brand-tag { display: none !important; }
+  .burger { display: flex; flex-direction: column; justify-content: center; gap: 4px; width: 40px; height: 40px; padding: 9px; cursor: pointer; border-radius: 8px; }
+  .burger span { display: block; height: 2px; background: #fff; border-radius: 2px; transition: transform .2s, opacity .2s; }
+  .navtoggle:checked + .burger { background: rgba(255,255,255,0.1); }
+  .navtoggle:checked + .burger span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  .navtoggle:checked + .burger span:nth-child(2) { opacity: 0; }
+  .navtoggle:checked + .burger span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+  header.top nav, header.top .search, header.top .me { display: none; width: 100%; order: 5; }
+  .navtoggle:checked ~ nav { display: flex; flex-direction: column; align-items: stretch; overflow: visible; padding: 6px 0; }
+  .navtoggle:checked ~ nav a { padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,0.08); border-top: none; margin: 0; }
+  .navtoggle:checked ~ nav a.on { border-bottom-color: var(--gov-gold); }
+  .navtoggle:checked ~ .search { display: block; margin: 4px 0 8px; }
+  .navtoggle:checked ~ .search input { width: 100%; font-size: 16px; }
+  .navtoggle:checked ~ .me { display: flex; justify-content: space-between; padding: 8px 0 4px; }
+
+  /* layout */
+  .kpis { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .kpi { padding: 10px 12px; }
+  .kpi b { font-size: 17px; }
+  .grid2 { grid-template-columns: 1fr; gap: 12px; }
+  .card { padding: 12px; border-radius: 8px; }
+  .titlebar, .profile { flex-direction: column; align-items: stretch; }
+  .titlebar .btn, .profile .btn { text-align: center; }
+  .tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs a { white-space: nowrap; }
+
+  /* forms: full width, 16px inputs so iOS doesn't zoom */
+  input, select, textarea, button, .btn { font-size: 16px; }
+  .filters > *, .inline > *, .formgrid > * { flex: 1 1 100%; width: 100%; }
+  .filters label, .inline label { display: flex; flex-direction: column; }
+  button, .btn { min-height: 42px; }
+  button.link { min-height: 0; }
+
+  /* tables -> cards */
+  table.cards thead { display: none; }
+  table.cards, table.cards tbody, table.cards tr, table.cards td { display: block; width: 100%; }
+  table.cards tr { border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; margin-bottom: 8px; background: var(--panel); }
+  table.cards tr.hl { border-color: var(--medium); }
+  table.cards tr.hl td { background: transparent; }
+  table.cards td { border: none; padding: 4px 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; text-align: right; max-width: none; }
+  table.cards td::before { content: attr(data-label); color: var(--muted); font-size: 12px; text-align: left; flex-shrink: 0; }
+  table.cards td:not([data-label])::before, table.cards td[data-label=""]::before { content: none; }
+  table.cards td:not([data-label]), table.cards td.full { justify-content: flex-start; text-align: left; }
+  table.cards td:first-child { font-weight: 600; }
+  table.cards td.msg { flex-wrap: wrap; }
+  table.cards td:empty { display: none; }
+  .scroll { overflow-x: visible; }
+  table.raw { display: block; overflow-x: auto; }
+
+  /* misc */
+  .flowrow { grid-template-columns: 40px 1fr 90px; }
+  dl.kv { grid-template-columns: 1fr; gap: 0; }
+  dl.kv dt { margin-top: 8px; font-size: 12px; }
+  .evidence header { flex-direction: column; align-items: flex-start; }
+  .evidence header form { margin-left: 0; }
+  .loginwrap { min-height: auto; }
+  .login { margin: 16px auto; padding: 16px; }
+  .loginhead h1 { font-size: 26px; }
+  .govfoot { font-size: 10px; }
+  .pager { flex-wrap: wrap; gap: 8px; }
+}
+@media (pointer: coarse) {
+  header.top nav a, .tabs a { min-height: 44px; }
+}
+
+/* mobile refinements */
+.govbanner .short { display: none; }
+@media (max-width: 760px) {
+  .govbanner .long { display: none; }
+  .govbanner .short { display: inline; }
+  form.filters.folded .extra { display: none; }
+  /* card cells: label on the left, the whole value kept together on the right */
+  table.cards td { display: block; position: relative; padding: 5px 0 5px 38%; text-align: right; min-height: 26px; overflow-wrap: anywhere; }
+  table.cards td::before { position: absolute; left: 0; top: 6px; width: 36%; text-align: left; white-space: normal; }
+  table.cards td:not([data-label]), table.cards td.full, table.cards td[data-label=""] { padding-left: 0; text-align: left; }
+  table.cards td:first-child[data-label] { font-weight: 600; }
+}
+@media (max-width: 760px) {
+  table.cards td::before { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 400; }
+}

@@ -4,16 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><%= typeof title !== 'undefined' ? title + ' · ' : '' %><%= appName %></title>
+<meta name="theme-color" content="#0f2747">
 <link rel="stylesheet" href="/static/style.css?v=<%= assetVersion %>">
+<script src="/static/app.js?v=<%= assetVersion %>" defer></script>
 </head>
 <body>
-<% if (bannerText) { %><div class="govbanner" role="note"><%= bannerText %></div><% } %>
+<% if (bannerText) { const shortBanner = bannerText.split('·').slice(0, 2).map(s => s.trim()).filter(Boolean).join(' · '); %><div class="govbanner" role="note"><span class="long"><%= bannerText %></span><span class="short"><%= shortBanner %></span></div><% } %>
 <% if ((typeof nav === 'undefined' || nav) && user) { %>
 <header class="top">
   <a class="brand" href="/" title="<%= appTagline %>">
     <%- include('seal', { size: 36 }) %>
     <span class="brand-text"><span class="brand-name"><%= appName %></span><% if (appTagline) { %><span class="brand-tag"><%= appTagline %></span><% } %></span>
   </a>
+  <input type="checkbox" id="navtoggle" class="navtoggle" aria-hidden="true">
+  <label for="navtoggle" class="burger" aria-label="Menu" title="Menu"><span></span><span></span><span></span></label>
   <nav>
     <% const links = [
       ['/', 'Overview', can('dashboard.view')],

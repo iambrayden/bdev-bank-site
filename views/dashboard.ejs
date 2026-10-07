@@ -12,7 +12,8 @@
 <% if (myCases.length) { %>
 <section class="card">
   <h2>My active cases <a class="small" href="/cases?mine=1">all →</a></h2>
-  <div class="scroll"><table class="data"><tbody>
+  <div class="scroll"><table class="data">
+  <thead><tr><th>Case</th><th>Title</th><th>Status</th><th>Priority</th><th>Updated</th></tr></thead><tbody>
   <% for (const c of myCases) { %><tr><td class="mono small">CASE-<%= String(c.id).padStart(4, '0') %></td><td><a href="/cases/<%= c.id %>"><%= c.title %></a></td><td><span class="status <%= c.status %>"><%= c.status.replace('_', ' ') %></span></td><td><span class="prio <%= c.priority %>"><%= c.priority %></span></td><td class="small muted"><%= fmt.ago(c.updated_at) %></td></tr><% } %>
   </tbody></table></div>
 </section>

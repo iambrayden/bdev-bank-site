@@ -32,6 +32,11 @@ can be overridden per table if your schema differs.
 
 ## Pages
 
+Works on desktop and phones: the layout switches automatically by screen size (same URLs).
+On phones the header collapses into a ☰ menu, wide tables become stacked cards and long
+filter forms fold behind a "More filters" button.
+
+
 - **Overview** – total money in the economy, richest citizens, 14-day
   deposit / withdrawal flow, money by job, high-severity flags.
 - **Citizens** – searchable, sortable list of every citizen from the
