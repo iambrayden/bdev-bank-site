@@ -1,0 +1,7 @@
+<% if (pg.pages > 1) { %>
+<div class="pager">
+  <% if (pg.page > 1) { %><a href="<%= fmt.qs(query, { page: pg.page - 1 }) %>">← Prev</a><% } %>
+  <span>Page <%= pg.page %> of <%= pg.pages %> · <%= fmt.int(pg.total) %> rows</span>
+  <% if (pg.page < pg.pages) { %><a href="<%= fmt.qs(query, { page: pg.page + 1 }) %>">Next →</a><% } %>
+</div>
+<% } %>

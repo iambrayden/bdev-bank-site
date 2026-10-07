@@ -1,0 +1,28 @@
+<%- include('partials/head', { title: 'Transactions' }) %>
+<%- include('partials/warnings') %>
+<h1>Transactions</h1>
+<form class="filters" method="get">
+  <input name="q" value="<%= query.q || '' %>" placeholder="Name, citizenid, message, trans id">
+  <select name="scope">
+    <option value="">All accounts</option>
+    <option value="personal" <%= query.scope === 'personal' ? 'selected' : '' %>>Personal</option>
+    <option value="shared" <%= query.scope === 'shared' ? 'selected' : '' %>>Shared / society</option>
+  </select>
+  <select name="type">
+    <option value="">Any type</option>
+    <option value="deposit" <%= query.type === 'deposit' ? 'selected' : '' %>>Deposit</option>
+    <option value="withdraw" <%= query.type === 'withdraw' ? 'selected' : '' %>>Withdraw</option>
+  </select>
+  <input name="account" value="<%= query.account || '' %>" placeholder="Account id" size="10">
+  <input name="min" type="number" value="<%= query.min || '' %>" placeholder="Min $" size="8">
+  <input name="max" type="number" value="<%= query.max || '' %>" placeholder="Max $" size="8">
+  <label class="small">From <input name="from" type="date" value="<%= query.from || '' %>"></label>
+  <label class="small">To <input name="to" type="date" value="<%= query.to || '' %>"></label>
+  <button>Search</button>
+  <a class="btn ghost" href="/transactions">Clear</a>
+  <a class="btn ghost" href="/transactions<%= fmt.qs(query, { format: 'csv', page: '' }) %>">Export CSV</a>
+</form>
+<p class="muted"><%= fmt.int(pg.total) %> matching · deposits <span class="pos mono"><%= fmt.money(sum.in) %></span> · withdrawals <span class="neg mono"><%= fmt.money(sum.out) %></span></p>
+<%- include('partials/tx', { list: pg.items, showAccount: true }) %>
+<%- include('partials/pager') %>
+<%- include('partials/foot') %>

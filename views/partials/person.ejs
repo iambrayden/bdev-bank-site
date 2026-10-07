@@ -1,0 +1,4 @@
+<%# renders a name that links to the character when it resolves unambiguously %>
+<% if (!who) { %><span class="muted">—</span><% } else { const c = locals.s ? (s.nameIndex.get(String(who).toLowerCase().trim()) || []) : []; %>
+<% if (c.length === 1) { %><a href="/players/<%= encodeURIComponent(c[0]) %>"><%= who %></a><% } else { %><%= who %><% } %>
+<% } %>

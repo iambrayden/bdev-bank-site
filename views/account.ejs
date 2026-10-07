@@ -1,0 +1,32 @@
+<%- include('partials/head', { title: a.id }) %>
+<div class="crumbs"><a href="/accounts">Shared accounts</a> / <%= a.id %></div>
+<h1><%= a.id %> <% if (a.frozen) { %><span class="pill out">frozen</span><% } %></h1>
+<section class="kpis">
+  <div class="kpi"><span>Balance</span><b><%= fmt.money(a.amount) %></b></div>
+  <div class="kpi"><span>Transactions on record</span><b><%= fmt.int(a.txCount) %></b></div>
+  <div class="kpi"><span>Creator</span><b class="small"><% if (a.creator) { const o = s.playerMap.get(a.creator); %><a href="/players/<%= encodeURIComponent(a.creator) %>"><%= o ? o.name : a.creator %></a><% } else { %>— (job account)<% } %></b></div>
+</section>
+<div class="grid2">
+<section class="card">
+  <h2>Authorised characters</h2>
+  <% if (!a.auth.length) { %><p class="muted">None listed (job accounts are usually controlled by job grade).</p><% } %>
+  <ul><% for (const c of a.auth) { const o = s.playerMap.get(c); %><li><a href="/players/<%= encodeURIComponent(c) %>"><%= o ? o.name : c %></a> <span class="mono muted small"><%= c %></span></li><% } %></ul>
+</section>
+<section class="card">
+  <h2>Members of job / group “<%= a.id %>” <span class="muted">(<%= members.length %>)</span></h2>
+  <% if (!members.length) { %><p class="muted">No characters have this job.</p><% } else { %>
+  <table class="data"><tbody>
+  <% for (const p of members) { const g = p.groups.find(x => x.group === a.id); %>
+    <tr><td><a href="/players/<%= encodeURIComponent(p.citizenid) %>"><%= p.name %></a></td><td class="small">grade <%= g ? g.grade : (p.job && p.job.grade) %></td><td class="r mono"><%= fmt.money(p.cash + p.bank) %></td></tr>
+  <% } %>
+  </tbody></table>
+  <% } %>
+</section>
+</div>
+<section class="card"><h2>Audit flags</h2><%- include('partials/flags', { list: flags }) %></section>
+<section class="card">
+  <h2>Transactions <a class="small" href="/transactions?account=<%= encodeURIComponent(a.id) %>&scope=shared">search / export →</a></h2>
+  <%- include('partials/tx', { list: tx.items, showAccount: false }) %>
+  <%- include('partials/pager', { pg: tx }) %>
+</section>
+<%- include('partials/foot') %>

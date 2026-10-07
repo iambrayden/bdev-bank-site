@@ -1,0 +1,87 @@
+<%- include('partials/head', { title: 'Settings' }) %>
+<h1>Settings</h1>
+<% if (msg) { %><p class="notice"><%= msg %></p><% } %>
+
+<section class="card" id="db">
+  <h2>Database connection</h2>
+  <p class="muted small">Defaults come from the <code>DB_*</code> environment variables. Use a MySQL user with <b>SELECT only</b> — the app never writes, and every session is also set read-only.</p>
+  <form method="post" action="/settings/db" class="formgrid">
+    <label>Host <input name="host" value="<%= cfg.db.host %>" required></label>
+    <label>Port <input name="port" type="number" value="<%= cfg.db.port %>"></label>
+    <label>Database <input name="database" value="<%= cfg.db.database %>" required></label>
+    <label>User <input name="user" value="<%= cfg.db.user %>" required autocomplete="off"></label>
+    <label>Password <input name="password" type="password" placeholder="<%= cfg.db.password ? '•••••• (unchanged)' : '' %>" autocomplete="new-password"></label>
+    <div class="actions">
+      <button name="action" value="test" class="ghost">Test connection</button>
+      <button name="action" value="save">Save</button>
+    </div>
+  </form>
+  <% if (dbError) { %><p class="err">Current connection: <%= dbError %></p><% } else { %><p class="small pos">Connected · <%= dbTables.length %> tables in <span class="mono"><%= cfg.db.database %></span></p><% } %>
+</section>
+
+<section class="card" id="tables">
+  <h2>Tables to audit</h2>
+  <datalist id="dbtables"><% for (const t of dbTables) { %><option value="<%= t.name %>"><% } %></datalist>
+  <% const known = new Set(dbTables.map(t => t.name)); %>
+  <form method="post" action="/settings/tables">
+    <h3>Core: players table</h3>
+    <p class="muted small">The master list of every character — citizenid, name (charinfo), money (cash / bank / crypto), job and license. Every other table is linked to it by citizenid.</p>
+    <div class="trow core">
+      <input name="core_name" value="<%= cfg.core.name %>" list="dbtables" class="mono" required>
+      <% if (dbTables.length && !known.has(cfg.core.name)) { %><span class="err small">not found</span><% } %>
+      <details><summary class="small">Column mapping</summary>
+        <p class="small muted">Defaults: <code><%= JSON.stringify(ROLES.players.columns) %></code>. Override only what differs, as JSON.</p>
+        <textarea name="core_columns" rows="2" class="mono" placeholder='{"money": "money"}'><%= cfg.core.columns ? JSON.stringify(cfg.core.columns) : '' %></textarea>
+      </details>
+    </div>
+
+    <h3>Linked tables</h3>
+    <% cfg.tables.forEach((t, i) => { %>
+    <div class="trow">
+      <input name="name" value="<%= t.name %>" list="dbtables" class="mono">
+      <select name="role">
+        <% for (const [k, r] of Object.entries(ROLES)) { if (k === 'players') continue; %><option value="<%= k %>" <%= t.role === k ? 'selected' : '' %>><%= r.label %></option><% } %>
+      </select>
+      <label class="small"><input type="checkbox" name="remove" value="<%= i %>"> remove</label>
+      <% if (dbTables.length && !known.has(t.name)) { %><span class="err small">not found</span><% } %>
+      <details><summary class="small">Column mapping</summary>
+        <p class="small muted">Defaults for this role: <code><%= JSON.stringify((ROLES[t.role] || ROLES.generic).columns) %></code></p>
+        <textarea name="columns" rows="2" class="mono" placeholder='{"citizenid": "citizenid"}'><%= t.columns ? JSON.stringify(t.columns) : '' %></textarea>
+      </details>
+    </div>
+    <% }) %>
+    <div class="trow">
+      <input name="name" placeholder="Add table…" list="dbtables" class="mono">
+      <select name="role"><% for (const [k, r] of Object.entries(ROLES)) { if (k === 'players') continue; %><option value="<%= k %>" <%= k === 'generic' ? 'selected' : '' %>><%= r.label %></option><% } %></select>
+      <textarea name="columns" hidden></textarea>
+    </div>
+    <% const unconfigured = dbTables.filter(t => t.name !== cfg.core.name && !cfg.tables.some(c => c.name === t.name)); %>
+    <% if (unconfigured.length) { %>
+    <details><summary>Add more tables from the database (<%= unconfigured.length %>)</summary>
+      <div class="checks"><% for (const t of unconfigured) { %><label class="small mono"><input type="checkbox" name="add" value="<%= t.name %>"> <%= t.name %></label><% } %></div>
+    </details>
+    <% } %>
+    <div class="actions"><button>Save tables</button></div>
+  </form>
+</section>
+
+<section class="card" id="thresholds">
+  <h2>Audit thresholds</h2>
+  <form method="post" action="/settings/thresholds" class="formgrid">
+    <label>Large transaction ($) <input name="largeTransaction" type="number" value="<%= cfg.thresholds.largeTransaction %>"></label>
+    <label>High character balance ($) <input name="highBalance" type="number" value="<%= cfg.thresholds.highBalance %>"></label>
+    <label>High shared account balance ($) <input name="highAccountBalance" type="number" value="<%= cfg.thresholds.highAccountBalance %>"></label>
+    <label>Burst: transactions <input name="burstCount" type="number" value="<%= cfg.thresholds.burstCount %>"></label>
+    <label>Burst: within minutes <input name="burstMinutes" type="number" value="<%= cfg.thresholds.burstMinutes %>"></label>
+    <label>Repeated transfers: count <input name="pairCount" type="number" value="<%= cfg.thresholds.pairCount %>"></label>
+    <label>Repeated transfers: within days <input name="pairDays" type="number" value="<%= cfg.thresholds.pairDays %>"></label>
+    <div class="actions"><button>Save thresholds</button></div>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Reset</h2>
+  <p class="muted small">Settings are stored in <code><%= configFile %></code>. Resetting deletes that file and falls back to environment variables.</p>
+  <form method="post" action="/settings/reset" onsubmit="return confirm('Reset all settings to environment defaults?')"><button class="ghost danger">Reset to defaults</button></form>
+</section>
+<%- include('partials/foot') %>

@@ -1,0 +1,21 @@
+{
+  "name": "bdev-bank-audit",
+  "version": "1.0.0",
+  "description": "Read-only bank / economy auditor for FiveM Qbox servers",
+  "main": "src/server.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^7.0.1",
+    "express": "^4.22.3",
+    "mysql2": "^3.24.5"
+  }
+}

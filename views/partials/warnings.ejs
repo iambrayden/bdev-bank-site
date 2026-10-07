@@ -1,0 +1,6 @@
+<% if (s && s.warnings.length) { %>
+<details class="warn"><summary><%= s.warnings.length %> data warning<%= s.warnings.length === 1 ? '' : 's' %> — some tables may be misconfigured</summary>
+<ul><% for (const w of s.warnings) { %><li><%= w %></li><% } %></ul>
+<p>Fix table names or column mappings in <a href="/settings">Settings</a>.</p>
+</details>
+<% } %>

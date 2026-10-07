@@ -1,0 +1,36 @@
+<%- include('partials/head', { title: 'Characters' }) %>
+<%- include('partials/warnings') %>
+<h1>Characters <span class="muted">(<%= fmt.int(pg.total) %>)</span></h1>
+<form class="filters" method="get">
+  <input name="q" value="<%= query.q || '' %>" placeholder="Name, citizenid, license, job, phone">
+  <select name="sort">
+    <% for (const [v, l] of [['total','Cash + bank'],['bank','Bank'],['cash','Cash'],['name','Name'],['activity','Last transaction'],['updated','Last updated']]) { %>
+      <option value="<%= v %>" <%= query.sort === v ? 'selected' : '' %>><%= l %></option>
+    <% } %>
+  </select>
+  <button>Filter</button>
+  <a class="btn ghost" href="/players<%= fmt.qs(query, { format: 'csv', page: '' }) %>">Export CSV</a>
+</form>
+<div class="scroll">
+<table class="data">
+<thead><tr><th>Character</th><th>Citizen ID</th><th>Job</th><th class="r">Cash</th><th class="r">Bank</th><th class="r">Crypto</th><th class="r">Tx</th><th>Last tx</th><th>Flags</th></tr></thead>
+<tbody>
+<% if (!pg.items.length) { %><tr><td colspan="9" class="muted">No characters match.</td></tr><% } %>
+<% for (const p of pg.items) { const fc = flagCount.get(p.citizenid) || 0; %>
+<tr>
+  <td><a href="/players/<%= encodeURIComponent(p.citizenid) %>"><%= p.name %></a><% if (p.account && p.account !== p.name) { %> <span class="muted small"><%= p.account %></span><% } %><% if (p.frozen) { %> <span class="pill out">frozen</span><% } %></td>
+  <td class="mono"><%= p.citizenid %></td>
+  <td><% if (p.job) { %><a href="/players?job=<%= encodeURIComponent(p.job.name) %>"><%= p.job.label %></a><% if (p.job.grade !== undefined && p.job.grade !== '') { %> <span class="muted small"><%= p.job.grade %></span><% } %><% } %></td>
+  <td class="r mono"><%= fmt.money(p.cash) %></td>
+  <td class="r mono"><%= fmt.money(p.bank) %></td>
+  <td class="r mono"><%= p.crypto ? fmt.int(p.crypto) : '' %></td>
+  <td class="r"><%= p.txCount || '' %></td>
+  <td class="small nowrap"><%= fmt.ago(p.lastTx) %></td>
+  <td><% if (fc) { %><a class="sev medium" href="/players/<%= encodeURIComponent(p.citizenid) %>#flags"><%= fc %></a><% } %></td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>
+<%- include('partials/pager') %>
+<%- include('partials/foot') %>

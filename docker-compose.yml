@@ -1,0 +1,23 @@
+# Coolify: create a "Docker Compose" resource from this repo, then set the
+# environment variables in the Coolify UI. Assign a domain to the `app` service.
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      - APP_PASSWORD=${APP_PASSWORD}
+      - SESSION_SECRET=${SESSION_SECRET:-}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - PLAYERS_TABLE=${PLAYERS_TABLE:-players}
+      - AUDIT_TABLES=${AUDIT_TABLES:-}
+      - TZ_DISPLAY=${TZ_DISPLAY:-UTC}
+    volumes:
+      - audit-data:/data
+    expose:
+      - "3000"
+volumes:
+  audit-data:

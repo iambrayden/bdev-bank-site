@@ -1,0 +1,20 @@
+<div class="scroll">
+<table class="data">
+<thead><tr><th>Severity</th><th>Flag</th><th>Details</th><th>Subject</th><th class="r">Amount</th><th>When</th></tr></thead>
+<tbody>
+<% if (!list.length) { %><tr><td colspan="6" class="muted">Nothing flagged.</td></tr><% } %>
+<% for (const f of list) { %>
+<tr>
+  <td><span class="sev <%= f.severity %>"><%= f.severity %></span></td>
+  <td><strong><%= f.title %></strong><br><span class="muted small mono"><%= f.code %></span></td>
+  <td class="msg"><%= f.detail %><% if (f.trans_id) { %><br><a class="small" href="/transactions?q=<%= encodeURIComponent(f.trans_id) %>">find transaction</a><% } %></td>
+  <td class="nowrap">
+    <% if (f.citizenid) { const o = s.playerMap.get(f.citizenid); %><a href="/players/<%= encodeURIComponent(f.citizenid) %>"><%= o ? o.name : f.citizenid %></a><% } else if (f.accountType === 'shared') { %><a class="tag" href="/accounts/<%= encodeURIComponent(f.account) %>"><%= f.account %></a><% } else if (f.account) { %><a href="/players/<%= encodeURIComponent(f.account) %>"><%= f.account %></a><% } %>
+  </td>
+  <td class="r mono"><%= f.amount !== undefined ? fmt.money(f.amount) : '' %></td>
+  <td class="nowrap small"><%= f.time ? fmt.date(f.time) : '' %></td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>

@@ -1,0 +1,22 @@
+<%- include('partials/head', { title: 'Shared accounts' }) %>
+<%- include('partials/warnings') %>
+<h1>Shared &amp; society accounts <span class="muted">(<%= list.length %>)</span></h1>
+<p><a class="btn ghost" href="/accounts?format=csv">Export CSV</a></p>
+<div class="scroll">
+<table class="data">
+<thead><tr><th>Account</th><th class="r">Balance</th><th class="r">Transactions</th><th>Creator</th><th>Authorised</th><th>Status</th></tr></thead>
+<tbody>
+<% for (const a of list) { %>
+<tr class="<%= a.amount ? '' : 'dim' %>">
+  <td><a class="tag" href="/accounts/<%= encodeURIComponent(a.id) %>"><%= a.id %></a></td>
+  <td class="r mono"><%= fmt.money(a.amount) %></td>
+  <td class="r"><%= a.txCount || '' %></td>
+  <td><% if (a.creator) { const o = s.playerMap.get(a.creator); %><a href="/players/<%= encodeURIComponent(a.creator) %>"><%= o ? o.name : a.creator %></a><% } %></td>
+  <td><% for (const c of a.auth) { const o = s.playerMap.get(c); %><a class="small" href="/players/<%= encodeURIComponent(c) %>"><%= o ? o.name : c %></a> <% } %></td>
+  <td><% if (a.frozen) { %><span class="pill out">frozen</span><% } %></td>
+</tr>
+<% } %>
+</tbody>
+</table>
+</div>
+<%- include('partials/foot') %>

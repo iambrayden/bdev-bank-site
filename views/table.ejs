@@ -1,0 +1,14 @@
+<%- include('partials/head', { title: t.name }) %>
+<div class="crumbs"><a href="/tables">Tables</a> / <span class="mono"><%= t.name %></span></div>
+<h1 class="mono"><%= t.name %> <span class="muted">(<%= fmt.int(total) %> rows)</span></h1>
+<p class="muted"><%= role ? role.label : 'Generic' %></p>
+<form class="filters" method="get">
+  <input name="q" value="<%= query.q || '' %>" placeholder="Search any column">
+  <select name="sort"><% for (const c of columns) { %><option <%= sort === c ? 'selected' : '' %>><%= c %></option><% } %></select>
+  <select name="dir"><option value="asc">Ascending</option><option value="desc" <%= dir === 'DESC' ? 'selected' : '' %>>Descending</option></select>
+  <button>Apply</button>
+  <a class="btn ghost" href="/tables/<%= encodeURIComponent(t.name) %><%= fmt.qs(query, { format: 'csv', page: '' }) %>">Export CSV</a>
+</form>
+<%- include('partials/rows', { columns, rows, linkCols }) %>
+<%- include('partials/pager', { pg: { page, pages, total } }) %>
+<%- include('partials/foot') %>

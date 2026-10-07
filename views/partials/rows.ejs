@@ -1,0 +1,14 @@
+<%# generic table of raw DB rows; long / JSON cells collapse %>
+<div class="scroll">
+<table class="data raw">
+<thead><tr><% for (const c of columns) { %><th><%= c %></th><% } %></tr></thead>
+<tbody>
+<% if (!rows.length) { %><tr><td colspan="<%= columns.length || 1 %>" class="muted">No rows.</td></tr><% } %>
+<% for (const r of rows) { %><tr>
+<% for (const c of columns) { const v = fmt.cell(r[c]); %>
+<td><% if (linkCols && linkCols.includes(c) && v) { %><a class="mono" href="/players/<%= encodeURIComponent(v) %>"><%= v %></a><% } else if (v.length > 60) { %><details><summary><%= v.slice(0, 48) %>…</summary><pre><%= fmt.pretty(r[c]) %></pre></details><% } else { %><%= v %><% } %></td>
+<% } %>
+</tr><% } %>
+</tbody>
+</table>
+</div>

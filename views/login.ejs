@@ -1,0 +1,9 @@
+<%- include('partials/head', { title: 'Log in', nav: false }) %>
+<form class="card login" method="post" action="/login">
+  <h1>Bank Audit</h1>
+  <p class="muted">Read-only economy auditor.</p>
+  <% if (error) { %><p class="err"><%= error %></p><% } %>
+  <label>Password <input type="password" name="password" autofocus required autocomplete="current-password"></label>
+  <button>Log in</button>
+</form>
+<%- include('partials/foot') %>
