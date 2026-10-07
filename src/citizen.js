@@ -60,6 +60,13 @@ function summarize(cid, sections) {
         unpaid: unpaid.reduce((a, r) => a + total(r), 0),
         unpaidCount: unpaid.length,
         recent: recent.map((r) => ({ house: c.house ? r[c.house] : '', total: total(r), paid: paid(r), date: c.date ? r[c.date] : '' })),
+        byHouse: rows.reduce((m, r) => {
+          const h = String(c.house ? r[c.house] : '');
+          const e = m[h] || (m[h] = { billed: 0, unpaid: 0, unpaidCount: 0 });
+          e.billed += total(r);
+          if (!paid(r)) (e.unpaid += total(r)), e.unpaidCount++;
+          return m;
+        }, {}),
       };
     } else if (role === 'player_groups') {
       // already shown in the profile

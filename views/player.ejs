@@ -2,7 +2,7 @@
 <%- include('partials/warnings') %>
 <%
   const tabUrl = (t) => `/citizens/${encodeURIComponent(cid)}${t === 'overview' ? '' : '?tab=' + t}`;
-  const assetCount = assets.houses.length + assets.vehicles.length + (assets.bills ? 1 : 0) + assets.listings.length;
+  const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
   const showAssets = can('players.linked');
   const showCases = can('cases.view') || can('cases.view_all');
   const tabs = [
@@ -38,7 +38,7 @@
   <div class="kpi"><span>Cash</span><b><%= money(p.cash) %></b></div>
   <% if (p.crypto) { %><div class="kpi"><span>Crypto</span><b><%= fmt.int(p.crypto) %></b></div><% } %>
   <% if (can('transactions.view')) { %><div class="kpi"><span>Money in / out (on record)</span><b class="small"><span class="pos"><%= money(inflow) %></span> / <span class="neg"><%= money(outflow) %></span></b></div><% } %>
-  <% if (showAssets) { %><div class="kpi"><span>Property</span><b class="small"><%= assets.houses.length %> houses · <%= assets.vehicles.length %> vehicles</b><% if (assets.bills && assets.bills.unpaidCount) { %><small class="neg"><%= money(assets.bills.unpaid) %> unpaid bills</small><% } %></div><% } %>
+  <% if (showAssets) { %><div class="kpi"><span>Property</span><b class="small"><%= plural(assets.houses.length, 'house') %> · <%= plural(assets.vehicles.length, 'vehicle') %></b><% if (assets.bills && assets.bills.unpaidCount) { %><small class="neg"><%= money(assets.bills.unpaid) %> unpaid bills</small><% } %></div><% } %>
 </section>
 <% } %>
 
@@ -118,37 +118,38 @@
 <% } %>
 <% } %>
 
-<% if (tab === 'assets') { %>
-<div class="grid2">
-  <section class="card">
-    <h2>Houses <span class="muted">(<%= assets.houses.length %>)</span></h2>
-    <% if (!assets.houses.length) { %><p class="muted">No houses owned or keyed.</p><% } else { %>
-    <table class="data">
-      <thead><tr><th>House</th><th>Access</th><th class="r">Price</th></tr></thead>
-      <tbody><% for (const h of assets.houses) { %>
-        <tr><td><%= h.label || h.house %><% if (h.label) { %> <span class="muted small mono"><%= h.house %></span><% } %></td><td><span class="tag"><%= h.relation %></span><% if (h.keyCount > 1) { %> <span class="small muted"><%= h.keyCount %> key holders</span><% } %></td><td class="r mono"><%= h.price !== undefined && h.price !== '' && h.price !== null ? money(h.price) : '' %></td></tr>
-      <% } %></tbody>
-    </table>
-    <% } %>
-    <% if (assets.listings.length) { %>
-    <h3>Houses they listed (real estate)</h3>
-    <ul class="plain"><% for (const l of assets.listings) { %><li><%= l.label || l.name %> <span class="muted small mono"><%= l.name %></span> <span class="mono small"><%= l.price !== null ? money(l.price) : '' %></span></li><% } %></ul>
-    <% } %>
-  </section>
-
-  <section class="card">
-    <h2>House bills</h2>
-    <% if (!assets.bills || !assets.bills.count) { %><p class="muted">No bills.</p><% } else { const b = assets.bills; %>
-    <p>Billed <b class="mono"><%= money(b.total) %></b> across <%= b.count %><%= b.capped ? '+' : '' %> bills · unpaid <b class="mono <%= b.unpaidCount ? 'neg' : '' %>"><%= money(b.unpaid) %></b> (<%= b.unpaidCount %>)</p>
+<% if (tab === 'assets') {
+  const billsBy = (assets.bills && assets.bills.byHouse) || {};
+  const houseRows = assets.houses.map(h => ({ ...h, bills: billsBy[String(h.house)] || null }));
+  // bills for houses they no longer own / key
+  for (const [name, b] of Object.entries(billsBy)) if (!houseRows.some(h => String(h.house) === name)) houseRows.push({ house: name, label: '', relation: 'Bills only', price: null, bills: b });
+%>
+<section class="card">
+  <h2>Property <span class="muted">(<%= assets.houses.length %>)</span></h2>
+  <% if (!houseRows.length) { %><p class="muted">No houses or house bills on record.</p><% } else { %>
+  <div class="scroll">
+  <table class="data">
+    <thead><tr><th>House</th><th>Access</th><th class="r">Price</th><th class="r">Unpaid bills</th></tr></thead>
+    <tbody><% for (const h of houseRows) { %>
+      <tr><td><%= h.label || h.house %><% if (h.label) { %> <span class="muted small mono"><%= h.house %></span><% } %></td>
+      <td><%= h.relation %></td>
+      <td class="r mono"><%= h.price !== undefined && h.price !== '' && h.price !== null ? money(h.price) : '' %></td>
+      <td class="r mono"><% if (!h.bills) { %><span class="muted">—</span><% } else if (h.bills.unpaidCount) { %><span class="neg"><%= money(h.bills.unpaid) %></span> <span class="muted small">(<%= h.bills.unpaidCount %>)</span><% } else { %><span class="muted">none</span><% } %></td></tr>
+    <% } %></tbody>
+  </table>
+  </div>
+  <% if (assets.bills && assets.bills.count) { const b = assets.bills; %>
+  <details class="mt"><summary class="small muted">Recent bills · <%= money(b.total) %> billed across <%= b.count %><%= b.capped ? '+' : '' %> bills</summary>
     <table class="data compact">
       <thead><tr><th>Date</th><th>House</th><th class="r">Amount</th><th>Status</th></tr></thead>
       <tbody><% for (const r of b.recent) { %>
         <tr><td class="small nowrap"><%= r.date %></td><td><%= r.house %></td><td class="r mono"><%= money(r.total) %></td><td><span class="pill <%= r.paid ? 'in' : 'out' %>"><%= r.paid ? 'paid' : 'unpaid' %></span></td></tr>
       <% } %></tbody>
     </table>
-    <% } %>
-  </section>
-</div>
+  </details>
+  <% } %>
+  <% } %>
+</section>
 
 <section class="card">
   <h2>Vehicles <span class="muted">(<%= assets.vehicles.length %>)</span></h2>

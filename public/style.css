@@ -273,3 +273,12 @@ ul.plain { list-style: none; padding: 0; margin: 0; }
 ul.plain li { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; border-bottom: 1px solid var(--line); }
 ul.plain li .r { margin-left: auto; }
 .center { text-align: center; margin: 0; }
+
+/* ---------- header: no scrollbars (v3) ---------- */
+header.top nav { overflow: visible; flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; }
+header.top nav a { margin-bottom: 0; border-bottom: 3px solid transparent; border-top: 3px solid transparent; }
+header.top .search, header.top .me { flex-shrink: 0; }
+@media (max-width: 1320px) {
+  header.top nav { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  header.top nav::-webkit-scrollbar { display: none; }
+}
