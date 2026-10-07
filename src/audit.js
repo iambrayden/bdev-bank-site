@@ -412,7 +412,7 @@ async function linkedRows(cid) {
   const sections = [];
   const skip = new Set(['players', 'player_transactions', 'bank_accounts']);
   for (const t of config.get().tables) {
-    if (skip.has(t.role)) continue;
+    if (skip.has(t.role) || t.role === 'house_locations') continue;
     let c;
     try {
       c = await resolveCols(t);

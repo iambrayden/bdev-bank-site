@@ -121,19 +121,17 @@
 <% if (tab === 'assets') {
   const billsBy = (assets.bills && assets.bills.byHouse) || {};
   const houseRows = assets.houses.map(h => ({ ...h, bills: billsBy[String(h.house)] || null }));
-  // bills for houses they no longer own / key
-  for (const [name, b] of Object.entries(billsBy)) if (!houseRows.some(h => String(h.house) === name)) houseRows.push({ house: name, label: '', relation: 'Bills only', price: null, bills: b });
 %>
 <section class="card">
-  <h2>Property <span class="muted">(<%= assets.houses.length %>)</span></h2>
-  <% if (!houseRows.length) { %><p class="muted">No houses or house bills on record.</p><% } else { %>
+  <h2>Houses owned <span class="muted">(<%= assets.houses.length %>)</span></h2>
+  <% if (!houseRows.length) { %><p class="muted">Owns no houses.</p><% } else { %>
   <div class="scroll">
   <table class="data">
-    <thead><tr><th>House</th><th>Access</th><th class="r">Price</th><th class="r">Unpaid bills</th></tr></thead>
+    <thead><tr><th>House</th><th class="r">Price</th><th>Key holders</th><th class="r">Unpaid bills</th></tr></thead>
     <tbody><% for (const h of houseRows) { %>
       <tr><td><%= h.label || h.house %><% if (h.label) { %> <span class="muted small mono"><%= h.house %></span><% } %></td>
-      <td><%= h.relation %></td>
       <td class="r mono"><%= h.price !== undefined && h.price !== '' && h.price !== null ? money(h.price) : '' %></td>
+      <td class="small"><%= h.keyCount > 1 ? `${h.keyCount - 1} other${h.keyCount === 2 ? '' : 's'}` : 'owner only' %></td>
       <td class="r mono"><% if (!h.bills) { %><span class="muted">—</span><% } else if (h.bills.unpaidCount) { %><span class="neg"><%= money(h.bills.unpaid) %></span> <span class="muted small">(<%= h.bills.unpaidCount %>)</span><% } else { %><span class="muted">none</span><% } %></td></tr>
     <% } %></tbody>
   </table>

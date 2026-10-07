@@ -20,6 +20,7 @@ function summarize(cid, sections) {
     if (role === 'player_houses') {
       for (const r of sec.rows) {
         const owns = (c.owner && r[c.owner] === cid) || (c.citizenid && r[c.citizenid] === cid);
+        if (!owns) continue; // key holders are not owners
         const keys = parseJson(c.keyholders ? r[c.keyholders] : null, []);
         out.houses.push({
           house: c.house ? r[c.house] : '',
